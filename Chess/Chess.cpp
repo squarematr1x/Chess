@@ -7,7 +7,7 @@
 #include "Piece.h"
 #include "Piece.cpp"
 
-void promote(std::vector<Piece*>& pieces, Piece*& p, Board& board)
+void promote(std::vector<Piece*>& pieces, Piece*& pawn, Board& board)
 {
 	char choice;
 	std::cout << "Promote pawn (y/n)? ";
@@ -15,11 +15,11 @@ void promote(std::vector<Piece*>& pieces, Piece*& p, Board& board)
 
 	if (choice == 'y' || choice == 'Y')
 	{
-		int row = p->getPos1();
-		int col = p->getPos2();
-		char color = p->getColor();
+		int row = pawn->getPos1();
+		int col = pawn->getPos2();
+		char color = pawn->getColor();
 
-		delete p;
+		delete pawn;
 		pieces.push_back(new Queen(color, row, col));
 		board.setCharAt(row, col, 'Q');
 	}
@@ -228,10 +228,10 @@ int main()
 		board.setOwner(bp->getPos1(), bp->getPos2(), bp->getColor());
 	}
 
-	bool ended = false;
+	bool gameOver = false;
 
-	// Main loop
-	while (!ended)
+	// Game loop
+	while (1)
 	{
 		board.printBoard();
 		board.started();
@@ -291,7 +291,10 @@ int main()
 					row1 = wp->getPos1();
 					col1 = wp->getPos2();
 					if (checkMate(blackPieces, wp, board))
-						ended = true;;
+					{
+						gameOver = true;
+						break;
+					}
 				}
 			}
 		}
@@ -305,12 +308,15 @@ int main()
 					row1 = bp->getPos1();
 					col1 = bp->getPos2();
 					if (checkMate(whitePieces, bp, board))
-						ended = true;
+					{
+						gameOver = true;
+						break;
+					}
 				}
 			}
 		}
 
-		if (ended)
+		if (gameOver)
 			break;
 
 		if (!checkW && turn == 0 || !checkB && turn == 1)
