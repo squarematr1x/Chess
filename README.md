@@ -3,5 +3,5 @@
 Player vs. player chess game (console app).
 
 ## Future plans
-* GUI
+* GUI (Qt)
 * AI (e.g. MinMax)
