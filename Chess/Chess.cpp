@@ -176,7 +176,7 @@ int main()
 	// Turn 0: white, 1: black
 	int turn = 0;
 
-	// Initialize pieces
+	// Initializing chess pieces
 	for (std::size_t i = 0; i != whitePieces.size(); i++)
 	{
 		if (i < 8)
@@ -350,15 +350,6 @@ int main()
 			selectAndMove(row1, col1, row2, col2, blackPieces, whitePieces, board);
 			if (board.getOwner(row1, col1) != 'b')
 				turn = 0;
-		}
-
-		std::cout << "Want to quit? (y/n): ";
-		std::cin >> option;
-		std::cout << '\n';
-
-		if (option == 'y' || option == 'Y')
-		{
-			break;
 		}
 	}
 

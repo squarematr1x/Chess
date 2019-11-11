@@ -2,6 +2,13 @@
 #include <iostream>
 #include "Board.h"
 
+class Pawn;
+class Rook;
+class Knight;
+class Bishop;
+class Queen;
+class King;
+
 class Piece
 {
 protected:
@@ -25,10 +32,7 @@ public:
 	int getPos1() { return m_pos1; }
 	int getPos2() { return m_pos2; }
 
-	void tellPos()
-	{
-		std::cout << "(" << getPos1() << ", " << getPos2() << ")\n";
-	}
+	void tellPos() { std::cout << "(" << getPos1() << ", " << getPos2() << ")\n"; }
 
 	void tellInfo()
 	{

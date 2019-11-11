@@ -17,41 +17,25 @@ public:
 		if (m_color == 'b')
 		{
 			if (row == m_pos1 + 1 && col == m_pos2 && board.getOwner(row, col) == '.')
-			{
 				return true;
-			}
 			else if (row == m_pos1 + 2 && col == m_pos2 && m_pos1 == 1 && board.getOwner(row, col) == '.')
-			{
 				return true;
-			}
 			else if (row == m_pos1 + 1 && col == m_pos2 + 1 && board.getOwner(row, col) == 'w')
-			{
 				return true;
-			}
 			else if (row == m_pos1 + 1 && col == m_pos2 - 1 && board.getOwner(row, col) == 'w')
-			{
 				return true;
-			}
 		}
 
 		else if (m_color == 'w')
 		{
 			if (row == m_pos1 - 1 && col == m_pos2 && board.getOwner(row, col) == '.')
-			{
 				return true;
-			}
 			else if (row == m_pos1 - 2 && col == m_pos2 && m_pos1 == 6 && board.getOwner(row, col) == '.')
-			{
 				return true;
-			}
 			else if (row == m_pos1 - 1 && col == m_pos2 - 1 && board.getOwner(row, col) == 'b')
-			{
 				return true;
-			}
 			else if (row == m_pos1 - 1 && col == m_pos2 + 1 && board.getOwner(row, col) == 'b')
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -77,9 +61,7 @@ public:
 				for (int i = col1 + 1; i < col2; i++)
 				{
 					if (board.getCharAt(row1, i) != '.')
-					{
 						return false;
-					}
 				}
 			}
 			else
@@ -87,9 +69,7 @@ public:
 				for (int i = col2 + 1; i < col1; i++)
 				{
 					if (board.getCharAt(row1, i) != '.')
-					{
 						return false;
-					}
 				}
 			}
 		}
@@ -99,9 +79,7 @@ public:
 				for (int i = row1 + 1; i < row2; i++)
 				{
 					if (board.getCharAt(i, col1) != '.')
-					{
 						return false;
-					}
 				}
 			}
 			else
@@ -109,9 +87,7 @@ public:
 				for (int i = row2 + 1; i < row1; i++)
 				{
 					if (board.getCharAt(i, col1) != '.')
-					{
 						return false;
-					}
 				}
 			}
 		}
@@ -121,20 +97,14 @@ public:
 	bool canMove(int row, int col, Board& board)
 	{
 		if (!openPathTo(m_pos1, m_pos2, row, col, board))
-		{
 			return false;
-		}
 
 		if (m_color != board.getOwner(row, col))
 		{
 			if (row == m_pos1 && col != m_pos2)
-			{
 				return true;
-			}
 			else if (row != m_pos1 && col == m_pos2)
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -157,21 +127,13 @@ public:
 		if (m_color != board.getOwner(row, col))
 		{
 			if (row == m_pos1 + 1 && (col == m_pos2 - 2 || col == m_pos2 + 2))
-			{
 				return true;
-			}
 			else if (row == m_pos1 + 2 && (col == m_pos2 - 1 || col == m_pos2 + 1))
-			{
 				return true;
-			}
 			else if (row == m_pos1 - 1 && (col == m_pos2 - 2 || col == m_pos2 + 2))
-			{
 				return true;
-			}
 			else if (row == m_pos1 - 2 && (col == m_pos2 - 1 || col == m_pos2 + 1))
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -195,30 +157,21 @@ public:
 		int colOffset = 0;
 
 		if (row > m_pos1)
-		{
 			rowOffset = 1;
-		}
 		else
-		{
 			rowOffset = -1;
-		}
 
 		if (col > m_pos2)
-		{
 			colOffset = 1;
-		}
 		else
-		{
 			colOffset = -1;
-		}
 
 		int j = m_pos2 + colOffset;
 		for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
 		{
 			if (board.getOwner(i, j) != '.')
-			{
 				return false;
-			}
+
 			j += colOffset;
 		}
 		return true;
@@ -227,14 +180,10 @@ public:
 	bool canMove(int row, int col, Board& board)
 	{
 		if (std::abs(row - m_pos1) != std::abs(col - m_pos2) || m_color == board.getOwner(row, col))
-		{
 			return false;
-		}
 
 		if (!openPathTo(row, col, board))
-		{
 			return false;
-		}
 
 		return true;
 	}
@@ -258,30 +207,21 @@ public:
 		int colOffset = 0;
 
 		if (row > m_pos1)
-		{
 			rowOffset = 1;
-		}
 		else if (row < m_pos1)
-		{
 			rowOffset = -1;
-		}
 
 		if (col > m_pos2)
-		{
 			colOffset = 1;
-		}
 		else if (col < m_pos2)
-		{
 			colOffset = -1;
-		}
 
 		int j = m_pos2 + colOffset;
 		for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
 		{
 			if (board.getOwner(i, j) != '.')
-			{
 				return false;
-			}
+
 			j += colOffset;
 		}
 		return true;
@@ -296,13 +236,9 @@ public:
 
 		if (m_color != board.getOwner(row, col)) {
 			if (std::abs(row - m_pos1) == std::abs(col - m_pos2) && m_color != board.getOwner(row, col))
-			{
 				return true;
-			}
 			else if (row - m_pos1 == 0 || col - m_pos2 == 0)
-			{
 				return true;
-			}
 		}
 		return false;
 	}
@@ -332,9 +268,7 @@ public:
 			for (std::size_t i = 0; i != kingPositions.size(); i++)
 			{
 				if (row == m_pos1 + kingPositions[i][0] && col == m_pos2 + kingPositions[i][1])
-				{
 					return true;
-				}
 			}
 		}
 		return false;
