@@ -7,7 +7,7 @@
 #include "Piece.h"
 #include "Piece.cpp"
 
-void promote(std::vector<Piece*>& pieces, Piece*& pawn, Board& board)
+void promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& board)
 {
 	char choice;
 	std::cout << "Promote pawn (y/n)? ";
@@ -18,11 +18,45 @@ void promote(std::vector<Piece*>& pieces, Piece*& pawn, Board& board)
 		int row = pawn->getPos1();
 		int col = pawn->getPos2();
 		char color = pawn->getColor();
+		char option;
 
 		delete pawn;
-		pieces.push_back(new Queen(color, row, col));
-		board.setCharAt(row, col, 'Q');
+
+		while (1)
+		{
+			std::cout << "Promote your pawn to Queen (Q), Knight (n), Rook (R) or Bishop (B): ";
+			std::cin >> option;
+
+			if (option == 'q' || option == 'Q')
+			{
+				pieces.push_back(new Queen(color, row, col));
+				board.setCharAt(row, col, 'Q');
+				break;
+			}
+			else if (option == 'n' || option == 'N')
+			{
+				pieces.push_back(new Knight(color, row, col));
+				board.setCharAt(row, col, 'n');
+				break;
+			}
+			else if (option == 'r' || option == 'R')
+			{
+				pieces.push_back(new Rook(color, row, col));
+				board.setCharAt(row, col, 'R');
+				break;
+			}
+			else if (option == 'b' || option == 'B')
+			{
+				pieces.push_back(new Bishop(color, row, col));
+				board.setCharAt(row, col, 'B');
+				break;
+			}
+			else
+				std::cout << "Invalid input. Try again.\n";
+		}
 	}
+	// Removing empty elements
+	pieces.erase(pieces.begin() + indx);
 }
 
 bool check(std::vector<Piece*> pieces, int row, int col, Board& board)
@@ -87,11 +121,11 @@ void selectAndMove(int row1, int col1, int row2, int col2, std::vector<Piece*>& 
 				p1[i]->tellInfo();
 				std::cout << "was moved\n";
 
-				if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'w' && row2 == 7)
-					promote(p1, p1[i], board);
+				if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'w' && row2 == 0)
+					promote(p1, p1[i], i, board);
 
-				else if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'b' && row2 == 0)
-					promote(p1, p1[i], board);
+				else if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'b' && row2 == 7)
+					promote(p1, p1[i], i, board);
 			}
 			else
 				std::cout << "Invalid move. Try again.\n";
@@ -105,6 +139,7 @@ void selectAndMove(int row1, int col1, int row2, int col2, std::vector<Piece*>& 
 		delete p2[removeId];
 		p2.erase(p2.begin() + removeId);
 	}
+	std::cout << "\n";
 }
 
 int getInputRow(bool selected)
@@ -237,7 +272,7 @@ int main()
 		board.started();
 
 		int row1 = 0, col1 = 0, row2 = 0, col2 = 0;
-		char cCol1, cCol2, option;
+		char cCol1, cCol2;
 		bool checkW = false;
 		bool checkB = false;
 
