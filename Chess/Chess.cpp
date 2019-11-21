@@ -134,7 +134,7 @@ int main()
 	}
 
 	bool gameOver = false;
-	bool pvp = false;
+	bool pvp = true;
 
 	// Game loop
 	while (1)

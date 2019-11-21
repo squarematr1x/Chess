@@ -18,7 +18,7 @@ public:
 		{
 			if (row == m_pos1 + 1 && col == m_pos2 && board.getOwner(row, col) == '.')
 				return true;
-			else if (row == m_pos1 + 2 && col == m_pos2 && m_pos1 == 1 && board.getOwner(row, col) == '.')
+			else if (row == m_pos1 + 2 && col == m_pos2 && m_pos1 == 1 && board.getOwner(row, col) == '.' && board.getOwner(m_pos1 + 1, col) == '.')
 				return true;
 			else if (row == m_pos1 + 1 && col == m_pos2 + 1 && board.getOwner(row, col) == 'w')
 				return true;
@@ -30,7 +30,7 @@ public:
 		{
 			if (row == m_pos1 - 1 && col == m_pos2 && board.getOwner(row, col) == '.')
 				return true;
-			else if (row == m_pos1 - 2 && col == m_pos2 && m_pos1 == 6 && board.getOwner(row, col) == '.')
+			else if (row == m_pos1 - 2 && col == m_pos2 && m_pos1 == 6 && board.getOwner(row, col) == '.' && board.getOwner(m_pos1 - 1, col) == '.')
 				return true;
 			else if (row == m_pos1 - 1 && col == m_pos2 - 1 && board.getOwner(row, col) == 'b')
 				return true;
