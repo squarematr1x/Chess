@@ -5,142 +5,9 @@
 #include <string>
 #include "Board.h"
 #include "Piece.h"
+#include "AI.h"
+#include "Moves.h"
 #include "Piece.cpp"
-
-void promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& board)
-{
-	char choice;
-	std::cout << "Promote pawn (y/n)? ";
-	std::cin >> choice;
-
-	if (choice == 'y' || choice == 'Y')
-	{
-		int row = pawn->getPos1();
-		int col = pawn->getPos2();
-		char color = pawn->getColor();
-		char option;
-
-		delete pawn;
-
-		while (1)
-		{
-			std::cout << "Promote your pawn to Queen (Q), Knight (n), Rook (R) or Bishop (B): ";
-			std::cin >> option;
-
-			if (option == 'q' || option == 'Q')
-			{
-				pieces.push_back(new Queen(color, row, col));
-				board.setCharAt(row, col, 'Q');
-				break;
-			}
-			else if (option == 'n' || option == 'N')
-			{
-				pieces.push_back(new Knight(color, row, col));
-				board.setCharAt(row, col, 'n');
-				break;
-			}
-			else if (option == 'r' || option == 'R')
-			{
-				pieces.push_back(new Rook(color, row, col));
-				board.setCharAt(row, col, 'R');
-				break;
-			}
-			else if (option == 'b' || option == 'B')
-			{
-				pieces.push_back(new Bishop(color, row, col));
-				board.setCharAt(row, col, 'B');
-				break;
-			}
-			else
-				std::cout << "Invalid input. Try again.\n";
-		}
-	}
-	// Removing empty elements
-	pieces.erase(pieces.begin() + indx);
-}
-
-bool check(std::vector<Piece*> pieces, int row, int col, Board& board)
-{
-	for (auto p : pieces)
-	{
-		if (p->canMove(row, col, board))
-			return true;
-	}
-	return false;
-}
-
-bool checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
-{
-	int pos1 = king->getPos1();
-	int pos2 = king->getPos2();
-
-	for (int i = -1; i <= 1; i++)
-	{
-		for (int j = -1; j <= 1; j++)
-		{
-			if (pos1 + i >= 0 && pos1 + i <= 7 && pos2 + j >= 0 && pos2 + j <= 7)
-			{
-				if (king->canMove(pos1 + i, pos2 + j, board))
-				{
-					if (!check(pieces, pos1 + i, pos2 + j, board))
-						return false;
-				}
-			}
-
-		}
-	}
-	std::cout << "Check Mate!\n";
-	return true;
-}
-
-void selectAndMove(int row1, int col1, int row2, int col2, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
-{
-	int removeId = 0;
-	bool replaced = false;
-	bool removed = false;
-
-	for (std::size_t i = 0; i != p2.size(); i++)
-	{
-		if (row2 == p2[i]->getPos1() && col2 == p2[i]->getPos2())
-		{
-			removeId = i;
-			removed = true;
-			break;
-		}
-	}
-
-	for (std::size_t i = 0; i != p1.size(); i++)
-	{
-		if (row1 == p1[i]->getPos1() && col1 == p1[i]->getPos2())
-		{
-			if (p1[i]->canMove(row2, col2, board))
-			{
-				replaced = true;
-				board.updateBoard(row1, col1, row2, col2, p1[i]->getName(), p1[i]->getColor());
-				p1[i]->updatePos(row2, col2);
-				p1[i]->tellInfo();
-				std::cout << "was moved\n";
-
-				if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'w' && row2 == 0)
-					promote(p1, p1[i], i, board);
-
-				else if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'b' && row2 == 7)
-					promote(p1, p1[i], i, board);
-			}
-			else
-				std::cout << "Invalid move. Try again.\n";
-		}
-	}
-
-	if (removed == true && replaced == true)
-	{
-		p2[removeId]->tellInfo();
-		std::cout << "was destroyed\n";
-		delete p2[removeId];
-		p2.erase(p2.begin() + removeId);
-	}
-	std::cout << "\n";
-}
 
 int getInputRow(bool selected)
 {
@@ -196,6 +63,9 @@ char getInputCol(bool selected)
 int main()
 {
 	Board board;
+	AI AI;
+	Moves moves;
+
 	std::vector<Piece*> whitePieces;
 	std::vector<Piece*> blackPieces;
 
@@ -264,6 +134,7 @@ int main()
 	}
 
 	bool gameOver = false;
+	bool pvp = false;
 
 	// Game loop
 	while (1)
@@ -273,18 +144,18 @@ int main()
 
 		int row1 = 0, col1 = 0, row2 = 0, col2 = 0;
 		char cCol1, cCol2;
-		bool checkW = false;
-		bool checkB = false;
+		bool checkW = false, checkB = false;
 
 		turn == 0 ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
+		// check and checkMate could be moved to Moves class
 		for (auto wp : whitePieces)
 		{
 			if (wp->getName() == 'K')
 			{
 				row1 = wp->getPos1();
 				col1 = wp->getPos2();
-				if (check(blackPieces, row1, col1, board))
+				if (moves.check(blackPieces, row1, col1, board))
 				{
 					checkW = true;
 					break;
@@ -303,7 +174,7 @@ int main()
 			{
 				row1 = bp->getPos1();
 				col1 = bp->getPos2();
-				if (check(whitePieces, row1, col1, board))
+				if (moves.check(whitePieces, row1, col1, board))
 				{
 					checkB = true;
 					break;
@@ -325,7 +196,7 @@ int main()
 				{
 					row1 = wp->getPos1();
 					col1 = wp->getPos2();
-					if (checkMate(blackPieces, wp, board))
+					if (moves.checkMate(blackPieces, wp, board))
 					{
 						gameOver = true;
 						break;
@@ -342,7 +213,7 @@ int main()
 				{
 					row1 = bp->getPos1();
 					col1 = bp->getPos2();
-					if (checkMate(whitePieces, bp, board))
+					if (moves.checkMate(whitePieces, bp, board))
 					{
 						gameOver = true;
 						break;
@@ -354,38 +225,85 @@ int main()
 		if (gameOver)
 			break;
 
-		if (!checkW && turn == 0 || !checkB && turn == 1)
+		if (pvp) 
 		{
-			std::cout << "Select from:\n";
-			std::cout << "row1 (1...8): ";
-			row1 = getInputRow(false);
-			row1 = coord1.at(row1);
-			std::cout << "col1 (A...H): ";
-			cCol1 = getInputCol(false);
-			col1 = coord2.at(cCol1);
+			if (!checkW && turn == 0 || !checkB && turn == 1)
+			{
+				std::cout << "Select from:\n";
+				std::cout << "row1 (1...8): ";
+				row1 = getInputRow(false);
+				row1 = coord1.at(row1);
+				std::cout << "col1 (A...H): ";
+				cCol1 = getInputCol(false);
+				col1 = coord2.at(cCol1);
+			}
+
+			std::cout << "Move to:\n";
+			std::cout << "row2 (1...8): ";
+			row2 = getInputRow(true);
+			row2 = coord1.at(row2);
+			std::cout << "col2 (A...H): ";
+			cCol2 = getInputCol(true);
+			col2 = coord2.at(cCol2);
+			std::cout << '\n';
+		}
+		else
+		{
+			if (!checkW && turn == 0)
+			{
+				std::cout << "Select from:\n";
+				std::cout << "row1 (1...8): ";
+				row1 = getInputRow(false);
+				row1 = coord1.at(row1);
+				std::cout << "col1 (A...H): ";
+				cCol1 = getInputCol(false);
+				col1 = coord2.at(cCol1);
+				std::cout << "Move to:\n";
+				std::cout << "row2 (1...8): ";
+				row2 = getInputRow(true);
+				row2 = coord1.at(row2);
+				std::cout << "col2 (A...H): ";
+				cCol2 = getInputCol(true);
+				col2 = coord2.at(cCol2);
+				std::cout << '\n';
+			}
 		}
 
-		std::cout << "Move to:\n";
-		std::cout << "row2 (1...8): ";
-		row2 = getInputRow(true);
-		row2 = coord1.at(row2);
-		std::cout << "col2 (A...H): ";
-		cCol2 = getInputCol(true);
-		col2 = coord2.at(cCol2);
-		std::cout << '\n';
-
-		if (turn == 0 && board.getOwner(row1, col1) == 'w')
+		if (pvp)
 		{
-			selectAndMove(row1, col1, row2, col2, whitePieces, blackPieces, board);
-			if (board.getOwner(row1, col1) != 'w')
-				turn = 1;
+			if (turn == 0 && board.getOwner(row1, col1) == 'w')
+			{
+				moves.selectAndMove(row1, col1, row2, col2, whitePieces, blackPieces, board);
+				if (board.getOwner(row1, col1) != 'w')
+					turn = 1;
+			}
+			else if (turn == 1 && board.getOwner(row1, col1) == 'b')
+			{
+				moves.selectAndMove(row1, col1, row2, col2, blackPieces, whitePieces, board);
+				if (board.getOwner(row1, col1) != 'b')
+					turn = 0;
+			}
 		}
-		else if (turn == 1 && board.getOwner(row1, col1) == 'b')
+		else
 		{
-			selectAndMove(row1, col1, row2, col2, blackPieces, whitePieces, board);
-			if (board.getOwner(row1, col1) != 'b')
+			if (turn == 0 && board.getOwner(row1, col1) == 'w')
+			{
+				moves.selectAndMove(row1, col1, row2, col2, whitePieces, blackPieces, board);
+				if (board.getOwner(row1, col1) != 'w')
+					turn = 1;
+			}
+			else if (turn == 1)
+			{
+				std::vector<int> AIPos;
+				AIPos.resize(4);
+
+				AIPos = AI.bestMove(blackPieces, whitePieces, board);
+				moves.selectAndMove(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
+
 				turn = 0;
+			}
 		}
+		std::cout << "white pieces.size() = " << whitePieces.size() << "\n";
 	}
 
 	for (auto piece : whitePieces)
