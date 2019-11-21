@@ -6,22 +6,6 @@
 
 void AI::move(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
 {
-	/*
-	std::vector<std::vector<int>> positions;
-	int depth = 3;
-	int bestScore = m_whiteScore - m_blackScore;
-	int currentScore;
-	int futurePos1, futurePos2;
-
-	for (auto& piece : pieces1) 
-	{
-		currentScore = minMax(piece->getPos1, piece->getPos2, depth, true, piece, board);
-
-		if (currentScore >= bestScore)
-		{
-			// Set futurePos1, futurePos2 and bestScore <= currenScore
-		}
-	}*/
 }
 
 std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
@@ -34,6 +18,7 @@ std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	{
 		srand((unsigned int) time(nullptr));
 		rdm = rand() % pieces1.size();
+		std::cout << "rdm was this time: " << rdm << "\n";
 		if (ableToMove(pieces1[rdm], board))
 			break;
 	}
@@ -47,11 +32,11 @@ std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 				positions[1] = pieces1[rdm]->getPos2();
 				positions[2] = i;
 				positions[3] = j;
+				std::cout << "pos size in rdmPos: " << positions.size() << "\n";
 				return positions;
 			}
 		}
 	}
-	return positions;
 }
 
 std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
@@ -109,6 +94,8 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 		positions[1] = fromPos2;
 		positions[2] = bestPos1;
 		positions[3] = bestPos2;
+
+		std::cout << "pos size in bestPos: " << positions.size() << "\n";
 
 		return positions;
 	}

@@ -51,3 +51,57 @@ void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char 
 	setOwner(row1, col1, '.');
 	setOwner(row2, col2, color);
 }
+
+void Board::updateBoardValue()
+{
+	m_boardValue = 0;
+
+	for (std::size_t i = 0; i < m_board.size(); i++)
+	{
+		for (std::size_t j = 0; j < m_board.size(); j++)
+		{
+			if (getCharAt(i, j) == 'P')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 10;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 10;
+			}
+			if (getCharAt(i, j) == 'R')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 50;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 50;
+			}
+			if (getCharAt(i, j) == 'n')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 30;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 30;
+			}
+			if (getCharAt(i, j) == 'B')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 30;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 30;
+			}
+			if (getCharAt(i, j) == 'Q')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 90;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 90;
+			}
+			if (getCharAt(i, j) == 'K')
+			{
+				if (getOwner(i, j) == 'w')
+					m_boardValue += 90;
+				else if (getOwner(i, j) == 'b')
+					m_boardValue -= 90;
+			}
+		}
+	}
+}

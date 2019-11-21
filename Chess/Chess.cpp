@@ -303,7 +303,8 @@ int main()
 				turn = 0;
 			}
 		}
-		std::cout << "white pieces.size() = " << whitePieces.size() << "\n";
+		board.updateBoardValue();
+		std::cout << "\nBoard value at the moment is: " << board.getBoardValue() << "\n";
 	}
 
 	for (auto piece : whitePieces)

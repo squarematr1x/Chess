@@ -10,7 +10,7 @@ private:
 	int m_whiteScore;
 
 public:
-	AI() : m_blackScore(-1290), m_whiteScore(1290)
+	AI()
 	{
 	}
 
