@@ -14,6 +14,8 @@ std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*>
 	positions.resize(4);
 
 	int rdm;
+	int boardSize = 8;
+
 	while (1)
 	{
 		srand((unsigned int) time(nullptr));
@@ -22,9 +24,9 @@ std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*>
 			break;
 	}
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < boardSize; i++)
 	{
-		for (int j = 0; j < 8; j++)
+		for (int j = 0; j < boardSize; j++)
 		{
 			if (pieces1[rdm]->canMove(i, j, board)) {
 				positions[0] = pieces1[rdm]->getPos1();
@@ -43,12 +45,13 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	int newMove = 0;
 	int fromPos1 = 0, fromPos2 = 0;
 	int bestPos1 = 0, bestPos2 = 0;
+	int boardSize = 8;
 
 	for (auto piece : pieces1)
 	{
-		for (int i = 0; i < 8; i++)
+		for (int i = 0; i < boardSize; i++)
 		{
-			for (int j = 0; j < 8; j++)
+			for (int j = 0; j < boardSize; j++)
 			{
 				if (piece->canMove(i, j, board))
 				{
@@ -108,11 +111,11 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 
 bool AI::ableToMove(Piece*& piece, Board& board)
 {
-	int boardWidth = 8, boardHeight = 8;
+	int boardSize = 8;
 
-	for (int i = 0; i < boardWidth; i++)
+	for (int i = 0; i < boardSize; i++)
 	{
-		for (int j = 0; j < boardHeight; j++)
+		for (int j = 0; j < boardSize; j++)
 		{
 			if (piece->canMove(i, j, board)) {
 				return true;
@@ -122,72 +125,51 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 	return false;
 }
 
-int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, Piece*& piece, Board& board)
+int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
 {
-	if (depth == 0) {
-		if (piece->getColor() == 'w' && board.getOwner(pos1, pos2) == 'b')
-		{
-			if (board.getCharAt(pos1, pos2) == 'P')
-				return 10;
-			if (board.getCharAt(pos1, pos2) == 'R')
-				return 50;
-			if (board.getCharAt(pos1, pos2) == 'n')
-				return 30;
-			if (board.getCharAt(pos1, pos2) == 'B')
-				return 30;
-			if (board.getCharAt(pos1, pos2) == 'Q')
-				return 90;
-			if (board.getCharAt(pos1, pos2) == 'K')
-				return 900;
-		}
-		else if (piece->getColor() == 'b' && board.getOwner(pos1, pos2) == 'w')
-		{
-			if (board.getCharAt(pos1, pos2) == 'P')
-				return -10;
-			if (board.getCharAt(pos1, pos2) == 'R')
-				return -50;
-			if (board.getCharAt(pos1, pos2) == 'n')
-				return -30;
-			if (board.getCharAt(pos1, pos2) == 'B')
-				return -30;
-			if (board.getCharAt(pos1, pos2) == 'Q')
-				return -90;
-			if (board.getCharAt(pos1, pos2) == 'K')
-				return -900;
-		}
+	if (depth == 0)
+	{
+		return 0;
 	}
+
+	int boardSize = 8;
 
 	if (maximizingPlayer)
 	{
 		int maxEval = INT_MIN;
-		for (int i = 0; i < 8; i++)
+		for (auto p1 : pieces1)
 		{
-			for (int j = 0; j < 8; j++)
+			for (int i = 0; i < boardSize; i++)
 			{
-				if (piece->canMove(i, j, board))
+				for (int j = 0; j < boardSize; j++)
 				{
-					int eval = minMax(i, j, depth - 1, false, piece, board);
-					maxEval = max(eval, maxEval);
-				}
+					if (p1->canMove(i, j, board))
+					{
+						int eval = minMax(i, j, depth - 1, false, pieces2, pieces1, board);
+						maxEval = max(eval, maxEval);
+					}
 
+				}
 			}
 		}
 		return maxEval;
-
 	}
 	else
 	{
 		int minEval = INT_MAX;
-		for (int i = 0; i < 8; i++)
+		for (auto p1 : pieces1)
 		{
-			for (int j = 0; j < 8; j++)
+			for (int i = 0; i < boardSize; i++)
 			{
-				if (piece->canMove(i, j, board))
+				for (int j = 0; j < boardSize; j++)
 				{
-					int eval = minMax(i, j, depth - 1, true, piece, board);
-					minEval = min(eval, minEval);
-				}
+					if (p1->canMove(i, j, board))
+					{
+						int eval = minMax(i, j, depth - 1, true, pieces2, pieces1, board);
+						minEval = min(eval, minEval);
+					}
 
+				}
 			}
 		}
 		return minEval;
@@ -208,4 +190,40 @@ int AI::max(int a, int b)
 		return a;
 	else
 		return b;
+}
+
+int AI::evaluate(int pos1, int pos2, Piece*& piece, Board& board)
+{
+	int value = 0;
+	if (piece->getColor() == 'w' && board.getOwner(pos1, pos2) == 'b')
+	{
+		if (board.getCharAt(pos1, pos2) == 'P')
+			value = 10;
+		else if (board.getCharAt(pos1, pos2) == 'R')
+			value = 50;
+		else if (board.getCharAt(pos1, pos2) == 'n')
+			value = 30;
+		else if (board.getCharAt(pos1, pos2) == 'B')
+			value = 30;
+		else if (board.getCharAt(pos1, pos2) == 'Q')
+			value = 90;
+		else if (board.getCharAt(pos1, pos2) == 'K')
+			value = 900;
+	}
+	else if (piece->getColor() == 'b' && board.getOwner(pos1, pos2) == 'w')
+	{
+		if (board.getCharAt(pos1, pos2) == 'P')
+			value = -10;
+		else if (board.getCharAt(pos1, pos2) == 'R')
+			value = -50;
+		else if (board.getCharAt(pos1, pos2) == 'n')
+			value = -30;
+		else if (board.getCharAt(pos1, pos2) == 'B')
+			value = -30;
+		else if (board.getCharAt(pos1, pos2) == 'Q')
+			value = -90;
+		else if (board.getCharAt(pos1, pos2) == 'K')
+			value = -900;
+	}
+	return value;
 }

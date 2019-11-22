@@ -304,7 +304,8 @@ int main()
 			}
 		}
 		board.updateBoardValue();
-		std::cout << "\nBoard value at the moment is: " << board.getBoardValue() << "\n";
+		std::cout << "Board value at the moment is: " << board.getBoardValue() << "\n";
+		std::cout << "\n";
 	}
 
 	for (auto piece : whitePieces)
