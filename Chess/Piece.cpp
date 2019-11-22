@@ -181,7 +181,6 @@ public:
 	{
 		if (std::abs(row - m_pos1) != std::abs(col - m_pos2) || m_color == board.getOwner(row, col))
 			return false;
-
 		if (!openPathTo(row, col, board))
 			return false;
 
@@ -206,6 +205,9 @@ public:
 		int rowOffset = 0;
 		int colOffset = 0;
 
+		if (row == m_pos1 && col == m_pos2)
+			return false;
+
 		if (row > m_pos1)
 			rowOffset = 1;
 		else if (row < m_pos1)
@@ -216,13 +218,26 @@ public:
 		else if (col < m_pos2)
 			colOffset = -1;
 
-		int j = m_pos2 + colOffset;
-		for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
+		if (m_pos1 != row) 
 		{
-			if (board.getOwner(i, j) != '.')
-				return false;
-
-			j += colOffset;
+			int j = m_pos2 + colOffset;
+			for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
+			{
+				std::cout << "These: " << i << "," << j << "\n";
+				if (board.getOwner(i, j) != '.')
+					return false;
+				j += colOffset;
+			}
+		}
+		else
+		{
+			int i = m_pos1;
+			for (int j = m_pos2 + colOffset; j != col; j += colOffset)
+			{
+				std::cout << "These: " << i << "," << j << "\n";
+				if (board.getOwner(i, j) != '.')
+					return false;
+			}
 		}
 		return true;
 	}
