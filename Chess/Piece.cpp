@@ -223,7 +223,6 @@ public:
 			int j = m_pos2 + colOffset;
 			for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
 			{
-				std::cout << "These: " << i << "," << j << "\n";
 				if (board.getOwner(i, j) != '.')
 					return false;
 				j += colOffset;
@@ -234,7 +233,6 @@ public:
 			int i = m_pos1;
 			for (int j = m_pos2 + colOffset; j != col; j += colOffset)
 			{
-				std::cout << "These: " << i << "," << j << "\n";
 				if (board.getOwner(i, j) != '.')
 					return false;
 			}

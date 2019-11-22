@@ -1,14 +1,14 @@
-#include "AI.h"
-#include "Board.h"
 #include <climits>  
 #include <time.h>
+#include "AI.h"
+#include "Board.h"
 #include "Moves.h"
 
 void AI::move(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
 {
 }
 
-std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
+std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
 {
 	std::vector<int> positions;
 	positions.resize(4);
@@ -18,7 +18,6 @@ std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	{
 		srand((unsigned int) time(nullptr));
 		rdm = rand() % pieces1.size();
-		std::cout << "rdm was this time: " << rdm << "\n";
 		if (ableToMove(pieces1[rdm], board))
 			break;
 	}
@@ -32,7 +31,6 @@ std::vector<int> AI::testMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 				positions[1] = pieces1[rdm]->getPos2();
 				positions[2] = i;
 				positions[3] = j;
-				std::cout << "pos size in rdmPos: " << positions.size() << "\n";
 				return positions;
 			}
 		}
@@ -103,7 +101,7 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	{
 		std::vector<int> randomPositions;
 		randomPositions.resize(4);
-		randomPositions = testMove(pieces1, pieces2, board);
+		randomPositions = randomMove(pieces1, pieces2, board);
 		return randomPositions;
 	}
 }

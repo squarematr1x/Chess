@@ -5,17 +5,13 @@
 
 class AI
 {
-private:
-	int m_blackScore;
-	int m_whiteScore;
-
 public:
 	AI()
 	{
 	}
 
 	void move(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board &board);
-	std::vector<int> testMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board);
+	std::vector<int> randomMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board);
 	std::vector<int> bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board);
 
 	int minMax(int pos1, int pos2, int depth, bool maximizingPlayer, Piece*& piece, Board &board);
