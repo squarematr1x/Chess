@@ -8,7 +8,7 @@ void AI::move(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& b
 {
 }
 
-std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
+std::vector<int> AI::randomMove(std::vector<Piece*> pieces, Board& board)
 {
 	std::vector<int> positions;
 	positions.resize(4);
@@ -19,8 +19,8 @@ std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*>
 	while (1)
 	{
 		srand((unsigned int) time(nullptr));
-		rdm = rand() % pieces1.size();
-		if (ableToMove(pieces1[rdm], board))
+		rdm = rand() % pieces.size();
+		if (ableToMove(pieces[rdm], board))
 			break;
 	}
 
@@ -28,9 +28,9 @@ std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*>
 	{
 		for (int j = 0; j < boardSize; j++)
 		{
-			if (pieces1[rdm]->canMove(i, j, board)) {
-				positions[0] = pieces1[rdm]->getPos1();
-				positions[1] = pieces1[rdm]->getPos2();
+			if (pieces[rdm]->canMove(i, j, board)) {
+				positions[0] = pieces[rdm]->getPos1();
+				positions[1] = pieces[rdm]->getPos2();
 				positions[2] = i;
 				positions[3] = j;
 				return positions;
@@ -39,7 +39,7 @@ std::vector<int> AI::randomMove(std::vector<Piece*> pieces1, std::vector<Piece*>
 	}
 }
 
-std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Board& board)
+std::vector<int> AI::bestMove(std::vector<Piece*> pieces, Board& board)
 {
 	int bestMove = INT_MIN;
 	int newMove = 0;
@@ -47,7 +47,7 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	int bestPos1 = 0, bestPos2 = 0;
 	int boardSize = 8;
 
-	for (auto piece : pieces1)
+	for (auto piece : pieces)
 	{
 		for (int i = 0; i < boardSize; i++)
 		{
@@ -104,7 +104,7 @@ std::vector<int> AI::bestMove(std::vector<Piece*> pieces1, std::vector<Piece*> p
 	{
 		std::vector<int> randomPositions;
 		randomPositions.resize(4);
-		randomPositions = randomMove(pieces1, pieces2, board);
+		randomPositions = randomMove(pieces, board);
 		return randomPositions;
 	}
 }
@@ -129,7 +129,7 @@ int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector
 {
 	if (depth == 0)
 	{
-		return 0;
+		return evaluate(pos1, pos2, maximizingPlayer, board);
 	}
 
 	int boardSize = 8;
@@ -137,8 +137,11 @@ int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector
 	if (maximizingPlayer)
 	{
 		int maxEval = INT_MIN;
+
+		// Checking each piece
 		for (auto p1 : pieces1)
 		{
+			// Checking each possible position
 			for (int i = 0; i < boardSize; i++)
 			{
 				for (int j = 0; j < boardSize; j++)
@@ -147,6 +150,7 @@ int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector
 					{
 						int eval = minMax(i, j, depth - 1, false, pieces2, pieces1, board);
 						maxEval = max(eval, maxEval);
+						// The position of max/minEval should also be saved
 					}
 
 				}
@@ -192,10 +196,10 @@ int AI::max(int a, int b)
 		return b;
 }
 
-int AI::evaluate(int pos1, int pos2, Piece*& piece, Board& board)
+int AI::evaluate(int pos1, int pos2, bool maximizing, Board& board)
 {
 	int value = 0;
-	if (piece->getColor() == 'w' && board.getOwner(pos1, pos2) == 'b')
+	if (maximizing && board.getOwner(pos1, pos2) == 'b')
 	{
 		if (board.getCharAt(pos1, pos2) == 'P')
 			value = 10;
@@ -210,7 +214,7 @@ int AI::evaluate(int pos1, int pos2, Piece*& piece, Board& board)
 		else if (board.getCharAt(pos1, pos2) == 'K')
 			value = 900;
 	}
-	else if (piece->getColor() == 'b' && board.getOwner(pos1, pos2) == 'w')
+	else if (!maximizing && board.getOwner(pos1, pos2) == 'w')
 	{
 		if (board.getCharAt(pos1, pos2) == 'P')
 			value = -10;

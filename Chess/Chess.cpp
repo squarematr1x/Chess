@@ -297,7 +297,7 @@ int main()
 				std::vector<int> AIPos;
 				AIPos.resize(4);
 
-				AIPos = AI.bestMove(blackPieces, whitePieces, board);
+				AIPos = AI.bestMove(blackPieces, board);
 				moves.selectAndMove(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
 
 				turn = 0;
