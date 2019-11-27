@@ -63,8 +63,8 @@ char getInputCol(bool selected)
 int main()
 {
 	Board board;
-	AI AI;
 	Moves moves;
+	AI AI(board);
 
 	std::vector<Piece*> whitePieces;
 	std::vector<Piece*> blackPieces;
@@ -135,12 +135,12 @@ int main()
 
 	bool gameOver = false;
 	bool pvp = false;
+	board.started();
 
 	// Game loop
 	while (1)
 	{
 		board.printBoard();
-		board.started();
 
 		int row1 = 0, col1 = 0, row2 = 0, col2 = 0;
 		char cCol1, cCol2;
@@ -297,15 +297,14 @@ int main()
 				std::vector<int> AIPos;
 				AIPos.resize(4);
 
-				AIPos = AI.bestMove(blackPieces, board);
+				AI.getBoard().copyBoard(board);
+				AIPos = AI.move(blackPieces, whitePieces, board);
 				moves.selectAndMove(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
 
 				turn = 0;
 			}
 		}
 		board.updateBoardValue();
-		std::cout << "Board value at the moment is: " << board.getBoardValue() << "\n";
-		std::cout << "\n";
 	}
 
 	for (auto piece : whitePieces)

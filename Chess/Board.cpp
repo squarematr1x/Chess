@@ -52,6 +52,29 @@ void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char 
 	setOwner(row2, col2, color);
 }
 
+void Board::copyBoard(Board& board)
+{
+	m_board.resize(8);
+	m_owned.resize(8);
+
+	m_atStart = board.getStarted();
+	m_boardValue = board.getBoardValue();
+
+	for (std::size_t i = 0; i < 8; ++i)
+	{
+		for (std::size_t j = 0; j < 8; ++j) 
+		{
+			m_board[i][j] = board.getCharAt(i, j);
+		}
+	}
+
+	for (std::size_t i = 0; i < 8; ++i)
+	{
+		for (std::size_t j = 0; j < 8; ++j)
+			m_owned[i][j] = board.getOwner(i, j);
+	}
+}
+
 void Board::updateBoardValue()
 {
 	m_boardValue = 0;
