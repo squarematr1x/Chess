@@ -1,7 +1,13 @@
 # Chess
 
-Player vs. player chess game (console app).
+Chess game (console app).
+
+## Features
+
+* Player vs. player
+* Player vs. CPU
+  * MinMax AI
 
 ## Future plans
 * GUI (Qt)
-* AI (e.g. MinMax)
+* Pruning of the MinMax algorithm
