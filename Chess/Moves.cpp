@@ -135,3 +135,43 @@ void Moves::selectAndMove(int row1, int col1, int row2, int col2, std::vector<Pi
 	}
 	std::cout << "\n";
 }
+
+void Moves::setCheckFlag(bool& setCheck, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+{
+	for (auto p : pieces1)
+	{
+		if (p->getName() == 'K')
+		{
+			row = p->getPos1();
+			col = p->getPos2();
+			if (check(pieces2, row, col, board))
+			{
+				setCheck = true;
+				break;
+			}
+			else
+			{
+				setCheck = false;
+				break;
+			}
+		}
+	}
+}
+
+void Moves::setCheckMateFlag(bool& gameOver, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+{
+	std::cout << "Check!\n";
+	for (auto p : pieces1)
+	{
+		if (p->getName() == 'K')
+		{
+			row = p->getPos1();
+			col = p->getPos2();
+			if (checkMate(pieces2, p, board))
+			{
+				gameOver = true;
+				break;
+			}
+		}
+	}
+}

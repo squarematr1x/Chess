@@ -6,7 +6,7 @@
 
 std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
-	int depth = 1;
+	int depth = 2;
 	minMax(depth, false, pieces1, pieces2, board);
 
 	std::vector<int> positions;
@@ -154,7 +154,7 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 		return evaluate(pieces1, maximizingPlayer, board);
 	}
 
-	int boardSize = 8;
+	unsigned int boardSize = 8;
 
 	if (maximizingPlayer)
 	{
@@ -164,9 +164,9 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 		for (auto p1 : pieces1)
 		{
 			// Checking each possible position 
-			for (int i = 0; i < boardSize; i++)
+			for (std::size_t i = 0; i < boardSize; i++)
 			{
-				for (int j = 0; j < boardSize; j++)
+				for (std::size_t j = 0; j < boardSize; j++)
 				{
 					if (p1->canMove(i, j, board))
 					{
@@ -198,9 +198,9 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 		int minEval = INT_MAX;
 		for (auto p1 : pieces1)
 		{
-			for (int i = 0; i < boardSize; i++)
+			for (std::size_t i = 0; i < boardSize; i++)
 			{
-				for (int j = 0; j < boardSize; j++)
+				for (std::size_t j = 0; j < boardSize; j++)
 				{
 					if (p1->canMove(i, j, board))
 					{
@@ -208,6 +208,7 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 						tempB.copyBoard(board);
 						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
 						tempB.updateBoardValue();
+
 
 						int eval = minMax(depth - 1, true, pieces2, pieces1, tempB);
 
@@ -257,13 +258,13 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 	else
 		eval = INT_MAX;
 
-	int boardSize = 8;
+	unsigned int boardSize = 8;
 
 	for (auto p : pieces)
 	{
-		for (int i = 0; i < boardSize; i++)
+		for (std::size_t i = 0; i < boardSize; i++)
 		{
-			for (int j = 0; j < boardSize; j++)
+			for (std::size_t j = 0; j < boardSize; j++)
 			{
 				if (p->canMove(i, j, board))
 				{
@@ -287,7 +288,7 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 				}
 			}
 		}
-		std::cout << "Board value: " << eval << "\n";
 	}
+
 	return eval;
 }

@@ -158,13 +158,17 @@ public:
 
 		if (row > m_pos1)
 			rowOffset = 1;
-		else
+		else if (row < m_pos1)
 			rowOffset = -1;
+		else
+			rowOffset = 0;
 
 		if (col > m_pos2)
 			colOffset = 1;
-		else
+		else if (col < m_pos2)
 			colOffset = -1;
+		else
+			colOffset = 0;
 
 		int j = m_pos2 + colOffset;
 		for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
@@ -202,42 +206,18 @@ public:
 
 	bool openPathTo(int row, int col, Board& board)
 	{
-		int rowOffset = 0;
-		int colOffset = 0;
-
-		if (row == m_pos1 && col == m_pos2)
-			return false;
-
-		if (row > m_pos1)
-			rowOffset = 1;
-		else if (row < m_pos1)
-			rowOffset = -1;
-
-		if (col > m_pos2)
-			colOffset = 1;
-		else if (col < m_pos2)
-			colOffset = -1;
-
-		if (m_pos1 != row) 
+		Rook rook = Rook(m_color, m_pos1, m_pos2);
+		if (rook.canMove(row, col, board))
 		{
-			int j = m_pos2 + colOffset;
-			for (int i = m_pos1 + rowOffset; i != row; i += rowOffset)
-			{
-				if (board.getOwner(i, j) != '.')
-					return false;
-				j += colOffset;
-			}
+			return true;
 		}
-		else
+		
+		Bishop bishop = Bishop(m_color, m_pos1, m_pos2);
+		if (bishop.canMove(row, col, board))
 		{
-			int i = m_pos1;
-			for (int j = m_pos2 + colOffset; j != col; j += colOffset)
-			{
-				if (board.getOwner(i, j) != '.')
-					return false;
-			}
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	bool canMove(int row, int col, Board& board)

@@ -134,7 +134,7 @@ int main()
 	}
 
 	bool gameOver = false;
-	bool pvp = false;
+	bool pvp = true;
 	board.started();
 
 	// Game loop
@@ -148,78 +148,17 @@ int main()
 
 		turn == 0 ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
-		// check and checkMate could be moved to Moves class
-		for (auto wp : whitePieces)
-		{
-			if (wp->getName() == 'K')
-			{
-				row1 = wp->getPos1();
-				col1 = wp->getPos2();
-				if (moves.check(blackPieces, row1, col1, board))
-				{
-					checkW = true;
-					break;
-				}
-				else
-				{
-					checkW = false;
-					break;
-				}
-			}
-		}
-
-		for (auto bp : blackPieces)
-		{
-			if (bp->getName() == 'K')
-			{
-				row1 = bp->getPos1();
-				col1 = bp->getPos2();
-				if (moves.check(whitePieces, row1, col1, board))
-				{
-					checkB = true;
-					break;
-				}
-				else
-				{
-					checkB = false;
-					break;
-				}
-			}
-		}
+		// Checking if check or check mate
+		moves.setCheckFlag(checkW, row1, col1, whitePieces, blackPieces, board);
+		moves.setCheckFlag(checkB, row1, col1, blackPieces, whitePieces, board);
 
 		if (checkW)
 		{
-			std::cout << "Check!\n";
-			for (auto wp : whitePieces)
-			{
-				if (wp->getName() == 'K')
-				{
-					row1 = wp->getPos1();
-					col1 = wp->getPos2();
-					if (moves.checkMate(blackPieces, wp, board))
-					{
-						gameOver = true;
-						break;
-					}
-				}
-			}
+			moves.setCheckMateFlag(gameOver, row1, col1, whitePieces, blackPieces, board);
 		}
-		else if (checkB)
+		if (checkB)
 		{
-			std::cout << "Check!\n";
-			for (auto bp : blackPieces)
-			{
-				if (bp->getName() == 'K')
-				{
-					row1 = bp->getPos1();
-					col1 = bp->getPos2();
-					if (moves.checkMate(whitePieces, bp, board))
-					{
-						gameOver = true;
-						break;
-					}
-				}
-			}
+			moves.setCheckMateFlag(gameOver, row1, col1, blackPieces, whitePieces, board);
 		}
 
 		if (gameOver)
