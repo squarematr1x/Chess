@@ -173,14 +173,13 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 						Board tempB;
 						tempB.copyBoard(board);
 						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
-
-						std::cout << "TempBoard in after white move\n";
-						m_tempBoard.printBoard();
+						tempB.updateBoardValue();
 
 						int eval = minMax(depth - 1, false, pieces2, pieces1, tempB);
 
 						if (eval > maxEval)
 						{
+							std::cout << "Best eval for white: " << eval << "\n";
 							m_wFrom1 = p1->getPos1();
 							m_wFrom2 = p1->getPos2();
 							m_wTo1 = i;
@@ -208,18 +207,18 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 						Board tempB;
 						tempB.copyBoard(board);
 						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
-
-						std::cout << "TempBoard in after black move\n";
-						tempB.printBoard();
+						tempB.updateBoardValue();
 
 						int eval = minMax(depth - 1, true, pieces2, pieces1, tempB);
-						// tempB.copyBoard(board); // Set board back after minMax
+
 						if (eval < minEval)
 						{
+							std::cout << "Best eval for black: " << eval << "\n";
 							m_bFrom1 = p1->getPos1();
 							m_bFrom2 = p1->getPos2();
 							m_bTo1 = i;
 							m_bTo2 = j;
+							std::cout << "Best black position updated: " << m_bFrom1 << "," << m_bFrom2 << " to -> " << m_bTo1 << "," << m_bTo2 << "\n";
 						}
 
 						minEval = min(eval, minEval);
@@ -248,7 +247,7 @@ int AI::max(int a, int b)
 		return b;
 }
 
-// calculate board value here instead
+// calculate board value here instead (something wrong here)
 int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 {
 	int eval;
@@ -270,7 +269,8 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 				{
 					Board tempB;
 					tempB.copyBoard(board);
-					tempB.updateBoard(p->getPos1(), p->getPos1(), i, j, p->getName(), p->getColor());
+					tempB.updateBoard(p->getPos1(), p->getPos2(), i, j, p->getName(), p->getColor());
+					tempB.updateBoardValue();
 
 					if (maximizing)
 					{

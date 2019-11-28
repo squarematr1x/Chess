@@ -50,6 +50,8 @@ void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char 
 	setCharAt(row2, col2, name);
 	setOwner(row1, col1, '.');
 	setOwner(row2, col2, color);
+
+	// Use updateBoardValue() here?
 }
 
 void Board::copyBoard(Board& board)
