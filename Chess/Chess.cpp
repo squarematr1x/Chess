@@ -134,7 +134,7 @@ int main()
 	}
 
 	bool gameOver = false;
-	bool pvp = true;
+	bool pvp = false;
 	board.started();
 
 	// Game loop
