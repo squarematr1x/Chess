@@ -6,17 +6,15 @@
 
 std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
-	int depth = 2;
-	std::cout << "Before minMax ok.\n";
-	minMax(0, 0, depth, false, pieces1, pieces2, board);
-	std::cout << "After minMax ok.\n";
+	int depth = 1;
+	minMax(depth, false, pieces1, pieces2, board);
+
 	std::vector<int> positions;
 	positions.resize(4);
 	positions[0] = m_bFrom1;
 	positions[1] = m_bFrom2;
 	positions[2] = m_bTo1;
 	positions[3] = m_bTo2;
-	std::cout << "After asigment ok.\n";
 
 	return positions;
 }
@@ -149,10 +147,12 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 	return false;
 }
 
-int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	if (depth == 0)
-		return evaluate(pos1, pos2, pieces1, maximizingPlayer, m_tempBoard);
+	{
+		return evaluate(pieces1, maximizingPlayer, board);
+	}
 
 	int boardSize = 8;
 
@@ -170,10 +170,14 @@ int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector
 				{
 					if (p1->canMove(i, j, board))
 					{
-						m_tempBoard.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
-						std::wcout << "TempBoard in after white\n";
+						Board tempB;
+						tempB.copyBoard(board);
+						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
+
+						std::cout << "TempBoard in after white move\n";
 						m_tempBoard.printBoard();
-						int eval = minMax(i, j, depth - 1, false, pieces2, pieces1, m_tempBoard); // replace board with some copy board
+
+						int eval = minMax(depth - 1, false, pieces2, pieces1, tempB);
 
 						if (eval > maxEval)
 						{
@@ -201,10 +205,15 @@ int AI::minMax(int pos1, int pos2, int depth, bool maximizingPlayer, std::vector
 				{
 					if (p1->canMove(i, j, board))
 					{
-						m_tempBoard.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
-						std::wcout << "TempBoard in after black\n";
-						m_tempBoard.printBoard();
-						int eval = minMax(i, j, depth - 1, true, pieces2, pieces1, m_tempBoard);
+						Board tempB;
+						tempB.copyBoard(board);
+						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
+
+						std::cout << "TempBoard in after black move\n";
+						tempB.printBoard();
+
+						int eval = minMax(depth - 1, true, pieces2, pieces1, tempB);
+						// tempB.copyBoard(board); // Set board back after minMax
 						if (eval < minEval)
 						{
 							m_bFrom1 = p1->getPos1();
@@ -239,69 +248,46 @@ int AI::max(int a, int b)
 		return b;
 }
 
-
 // calculate board value here instead
-int AI::evaluate(int pos1, int pos2, std::vector<Piece*>& pieces, bool maximizing, Board& board)
+int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 {
-	board.printBoard();
-	int value = 0;
+	int eval;
+
 	if (maximizing)
-	{
-		int max = 0;
-		for (auto p : pieces)
-		{
-			if (p->canMove(pos1, pos2, board))
-			{
-				if (board.getCharAt(pos1, pos2) == 'P')
-					value = 10;
-				else if (board.getCharAt(pos1, pos2) == 'R')
-					value = 50;
-				else if (board.getCharAt(pos1, pos2) == 'n')
-					value = 30;
-				else if (board.getCharAt(pos1, pos2) == 'B')
-					value = 30;
-				else if (board.getCharAt(pos1, pos2) == 'Q')
-					value = 90;
-				else if (board.getCharAt(pos1, pos2) == 'K')
-					value = 900;
+		eval = INT_MIN;
+	else
+		eval = INT_MAX;
 
-				if (value > max)
+	int boardSize = 8;
+
+	for (auto p : pieces)
+	{
+		for (int i = 0; i < boardSize; i++)
+		{
+			for (int j = 0; j < boardSize; j++)
+			{
+				if (p->canMove(i, j, board))
 				{
-					max = value;
-					m_tempBoard.updateBoard(p->getPos1(), p->getPos2(), pos1, pos2, p->getName(), p->getColor());
+					Board tempB;
+					tempB.copyBoard(board);
+					tempB.updateBoard(p->getPos1(), p->getPos1(), i, j, p->getName(), p->getColor());
+
+					if (maximizing)
+					{
+						int newValue = tempB.getBoardValue();
+						if (newValue > eval)
+							eval = newValue;
+					}
+					else
+					{
+						int newValue = tempB.getBoardValue();
+						if (newValue < eval)
+							eval = newValue;
+					}
 				}
 			}
 		}
-		return max;
+		std::cout << "Board value: " << eval << "\n";
 	}
-	else if (!maximizing)
-	{
-		int min = 0;
-		for (auto p : pieces)
-		{
-			if (p->canMove(pos1, pos2, board))
-			{
-				if (board.getCharAt(pos1, pos2) == 'P')
-					value = -10;
-				else if (board.getCharAt(pos1, pos2) == 'R')
-					value = -50;
-				else if (board.getCharAt(pos1, pos2) == 'n')
-					value = -30;
-				else if (board.getCharAt(pos1, pos2) == 'B')
-					value = -30;
-				else if (board.getCharAt(pos1, pos2) == 'Q')
-					value = -90;
-				else if (board.getCharAt(pos1, pos2) == 'K')
-					value = -900;
-
-				if (value < min)
-				{
-					min = value;
-					m_tempBoard.updateBoard(p->getPos1(), p->getPos2(), pos1, pos2, p->getName(), p->getColor());
-				}
-			}
-		}
-		return min;
-	}
-	return value;
+	return eval;
 }
