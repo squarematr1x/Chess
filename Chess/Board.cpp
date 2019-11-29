@@ -13,7 +13,7 @@ Board::Board()
 			m_board[i].push_back('.');
 	}
 
-	// Ownership of each node (white/black/.)
+	// Ownership of each node: white ('w'), black ('b') and empty ('.')
 	for (std::size_t i = 0; i < 8; ++i)
 	{
 		for (std::size_t j = 0; j < 8; ++j)
@@ -51,7 +51,7 @@ void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char 
 	setOwner(row1, col1, '.');
 	setOwner(row2, col2, color);
 
-	// Use updateBoardValue() here?
+	updateBoardValue();
 }
 
 void Board::copyBoard(Board& board)

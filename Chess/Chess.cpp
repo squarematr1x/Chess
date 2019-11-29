@@ -60,6 +60,25 @@ char getInputCol(bool selected)
 	return col;
 }
 
+int getGameMode()
+{
+	std::string sGameMode = "";
+	while (true)
+	{
+		std::cin >> sGameMode;
+		if (sGameMode != "1" && sGameMode != "2")
+		{
+			std::cin.clear();
+			std::cin.ignore(INT_MAX, '\n');
+			std::cout << "Game mode: ";
+		}
+		else
+			break;
+	}
+	int gameMode = std::stoi(sGameMode);
+	return gameMode;
+}
+
 int main()
 {
 	Board board;
@@ -132,10 +151,23 @@ int main()
 		board.setCharAt(bp->getPos1(), bp->getPos2(), bp->getName());
 		board.setOwner(bp->getPos1(), bp->getPos2(), bp->getColor());
 	}
+	board.started();
 
 	bool gameOver = false;
-	bool pvp = false;
-	board.started();
+	bool pvp;
+	int gameMode;
+
+	std::cout << "Welcome to Chess\n";
+	std::cout << "Player vs. Player (1)\n";
+	std::cout << "Player vs. CPU (2)\n";
+	std::cout << "Game mode: ";
+	gameMode = getGameMode();
+	std::cout << '\n';
+
+	if (gameMode == 1)
+		pvp = true;
+	else
+		pvp = false;
 
 	// Game loop
 	while (1)
@@ -148,17 +180,17 @@ int main()
 
 		turn == 0 ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
-		// Checking if check or check mate
-		moves.setCheckFlag(checkW, row1, col1, whitePieces, blackPieces, board);
-		moves.setCheckFlag(checkB, row1, col1, blackPieces, whitePieces, board);
+		// Checking if current state of the game is check
+		moves.updateCheckFlag(checkW, row1, col1, whitePieces, blackPieces, board);
+		moves.updateCheckFlag(checkB, row1, col1, blackPieces, whitePieces, board);
 
 		if (checkW)
 		{
-			moves.setCheckMateFlag(gameOver, row1, col1, whitePieces, blackPieces, board);
+			moves.updateCheckMateFlag(gameOver, row1, col1, whitePieces, blackPieces, board);
 		}
 		if (checkB)
 		{
-			moves.setCheckMateFlag(gameOver, row1, col1, blackPieces, whitePieces, board);
+			moves.updateCheckMateFlag(gameOver, row1, col1, blackPieces, whitePieces, board);
 		}
 
 		if (gameOver)

@@ -6,21 +6,16 @@
 class AI
 {
 private:
-	int m_wFrom1;
-	int m_wFrom2;
-	int m_wTo1;
-	int m_wTo2;
-
-	int m_bFrom1;
-	int m_bFrom2;
-	int m_bTo1;
-	int m_bTo2;
+	int m_from1;
+	int m_from2;
+	int m_to1;
+	int m_to2;
 
 	Board m_tempBoard;
 
 public:
 	AI(Board& board)
-		: m_wFrom1(0), m_wFrom2(0), m_wTo1(0), m_wTo2(0), m_bFrom1(0), m_bFrom2(0), m_bTo1(0), m_bTo2(0)
+		: m_from1(0), m_from2(0), m_to1(0), m_to2(0)
 	{
 		m_tempBoard.copyBoard(board);
 	}

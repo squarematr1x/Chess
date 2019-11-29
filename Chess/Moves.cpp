@@ -133,10 +133,10 @@ void Moves::selectAndMove(int row1, int col1, int row2, int col2, std::vector<Pi
 		delete p2[removeId];
 		p2.erase(p2.begin() + removeId);
 	}
-	std::cout << "\n";
+	std::cout << '\n';
 }
 
-void Moves::setCheckFlag(bool& setCheck, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+void Moves::updateCheckFlag(bool& setCheck, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	for (auto p : pieces1)
 	{
@@ -158,7 +158,7 @@ void Moves::setCheckFlag(bool& setCheck, int& row, int& col, std::vector<Piece*>
 	}
 }
 
-void Moves::setCheckMateFlag(bool& gameOver, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+void Moves::updateCheckMateFlag(bool& gameOver, int& row, int& col, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	std::cout << "Check!\n";
 	for (auto p : pieces1)
