@@ -6,8 +6,7 @@ Chess game (console app).
 
 * Player vs. player
 * Player vs. CPU
-  * MinMax AI
+  * MinMax with alpha-beta pruning
 
 ## Future plans
-* GUI (Qt)
-* Pruning of the MinMax algorithm
+* GUI (e.g. Qt)
