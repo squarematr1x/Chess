@@ -2,12 +2,16 @@
 #include <time.h>
 #include "AI.h"
 #include "Board.h"
+#include "Move.h"
 #include "Moves.h"
 
 std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
-	int depth = 1;
-	minMax(depth, false, pieces1, pieces2, board);
+	int alpha = INT_MIN;	// Worst for white
+	int beta = INT_MAX;		// Worst for black
+
+	int depth = 2;
+	minMax(depth, alpha, beta, false, pieces1, pieces2, board);
 
 	std::vector<int> positions;
 	positions.resize(4);
@@ -110,15 +114,12 @@ std::vector<int> AI::bestMove(std::vector<Piece*>& pieces, Board& board)
 
 	if (bestMove > 0)
 	{
-		std::cout << "The best move: " << bestMove << "\n";
 		std::vector<int> positions;
 		positions.resize(4);
 		positions[0] = fromPos1;
 		positions[1] = fromPos2;
 		positions[2] = bestPos1;
 		positions[3] = bestPos2;
-
-		std::cout << "pos size in bestPos: " << positions.size() << "\n";
 
 		return positions;
 	}
@@ -147,14 +148,14 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 	return false;
 }
 
-int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	if (depth == 0)
 	{
 		return evaluate(pieces1, maximizingPlayer, board);
 	}
 
-	unsigned int boardSize = 8;
+	int boardSize = 8;
 
 	if (maximizingPlayer)
 	{
@@ -164,11 +165,11 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 		for (auto p1 : pieces1)
 		{
 			// Checking each possible position 
-			for (std::size_t i = 0; i < boardSize; i++)
+			for (int i = 0; i < boardSize; i++)
 			{
-				for (std::size_t j = 0; j < boardSize; j++)
+				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board))
+					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
@@ -180,19 +181,18 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 						// Updating position for recursive function calls
 						p1->updatePos(i, j);
 
-						int eval = minMax(depth - 1, false, pieces2, pieces1, tempB);
+						int eval = minMax(depth - 1, alpha, beta, false, pieces2, pieces1, tempB);
 
 						// Resetting position
 						p1->updatePos(oldPos1, oldPos2);
-
-						if (eval > maxEval)
-						{
-							m_from1 = p1->getPos1();
-							m_from2 = p1->getPos2();
-							m_to1 = i;
-							m_to2 = j;
-						}
 						maxEval = max(eval, maxEval);
+						
+						alpha = max(alpha, eval);
+						if (beta <= alpha)
+						{
+							i = boardSize;
+							j = boardSize;
+						}
 					}
 
 				}
@@ -205,11 +205,11 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 		int minEval = INT_MAX;
 		for (auto p1 : pieces1)
 		{
-			for (std::size_t i = 0; i < boardSize; i++)
+			for (int i = 0; i < boardSize; i++)
 			{
-				for (std::size_t j = 0; j < boardSize; j++)
+				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board))
+					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
@@ -219,7 +219,7 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 						int oldPos2 = p1->getPos2();
 						p1->updatePos(i, j);
 
-						int eval = minMax(depth - 1, true, pieces2, pieces1, tempB);
+						int eval = minMax(depth - 1, alpha, beta, true, pieces2, pieces1, tempB);
 
 						p1->updatePos(oldPos1, oldPos2);
 
@@ -231,6 +231,13 @@ int AI::minMax(int depth, bool maximizingPlayer, std::vector<Piece*>& pieces1, s
 							m_to2 = j;
 						}
 						minEval = min(eval, minEval);
+
+						beta = min(beta, eval);
+						if (beta <= alpha)
+						{
+							i = boardSize;
+							j = boardSize;
+						}
 					}
 
 				}
@@ -265,13 +272,13 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 	else
 		eval = INT_MAX;
 
-	unsigned int boardSize = 8;
+	int boardSize = 8;
 
 	for (auto p : pieces)
 	{
-		for (std::size_t i = 0; i < boardSize; i++)
+		for (int i = 0; i < boardSize; i++)
 		{
-			for (std::size_t j = 0; j < boardSize; j++)
+			for (int j = 0; j < boardSize; j++)
 			{
 				if (p->canMove(i, j, board) && board.getOwner(p->getPos1(), p->getPos2()) == p->getColor())
 				{

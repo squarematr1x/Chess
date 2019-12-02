@@ -70,7 +70,7 @@ int getGameMode()
 		{
 			std::cin.clear();
 			std::cin.ignore(INT_MAX, '\n');
-			std::cout << "Game mode: ";
+			std::cout << "Game mode (1 =  player vs. player & 2 = player vs. CPU): ";
 		}
 		else
 			break;
@@ -160,6 +160,7 @@ int main()
 	std::cout << "Welcome to Chess\n";
 	std::cout << "Player vs. Player (1)\n";
 	std::cout << "Player vs. CPU (2)\n";
+	std::cout << '\n';
 	std::cout << "Game mode: ";
 	gameMode = getGameMode();
 	std::cout << '\n';
