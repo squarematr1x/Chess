@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Piece.h"
+#include "Board.h"
 
 class AI
 {

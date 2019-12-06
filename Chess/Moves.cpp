@@ -87,7 +87,7 @@ bool Moves::checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
 	return true;
 }
 
-void Moves::selectAndMove(int row1, int col1, int row2, int col2, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::move(int row1, int col1, int row2, int col2, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	int removeId = 0;
 	bool replaced = false;

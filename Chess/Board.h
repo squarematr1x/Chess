@@ -7,8 +7,8 @@ class Board
 private:
 	std::vector<std::vector<char>> m_board;
 	std::vector<std::vector<char>> m_owned;
-	bool m_atStart = true;
-	int m_boardValue = 0;
+	bool m_atStart { true };
+	int m_boardValue { 0 };
 
 public:
 	Board();

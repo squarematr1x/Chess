@@ -1,9 +1,6 @@
 #include <climits>  
 #include <time.h>
 #include "AI.h"
-#include "Board.h"
-#include "Move.h"
-#include "Moves.h"
 
 std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {

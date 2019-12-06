@@ -186,13 +186,10 @@ int main()
 		moves.updateCheckFlag(checkB, row1, col1, blackPieces, whitePieces, board);
 
 		if (checkW)
-		{
 			moves.updateCheckMateFlag(gameOver, row1, col1, whitePieces, blackPieces, board);
-		}
+
 		if (checkB)
-		{
 			moves.updateCheckMateFlag(gameOver, row1, col1, blackPieces, whitePieces, board);
-		}
 
 		if (gameOver)
 			break;
@@ -245,13 +242,13 @@ int main()
 		{
 			if (turn == 0 && board.getOwner(row1, col1) == 'w')
 			{
-				moves.selectAndMove(row1, col1, row2, col2, whitePieces, blackPieces, board);
+				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
 				if (board.getOwner(row1, col1) != 'w')
 					turn = 1;
 			}
 			else if (turn == 1 && board.getOwner(row1, col1) == 'b')
 			{
-				moves.selectAndMove(row1, col1, row2, col2, blackPieces, whitePieces, board);
+				moves.move(row1, col1, row2, col2, blackPieces, whitePieces, board);
 				if (board.getOwner(row1, col1) != 'b')
 					turn = 0;
 			}
@@ -260,7 +257,7 @@ int main()
 		{
 			if (turn == 0 && board.getOwner(row1, col1) == 'w')
 			{
-				moves.selectAndMove(row1, col1, row2, col2, whitePieces, blackPieces, board);
+				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
 				if (board.getOwner(row1, col1) != 'w')
 					turn = 1;
 			}
@@ -271,7 +268,7 @@ int main()
 
 				AI.getBoard().copyBoard(board);
 				AIPos = AI.move(blackPieces, whitePieces, board);
-				moves.selectAndMove(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
+				moves.move(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
 
 				turn = 0;
 			}
