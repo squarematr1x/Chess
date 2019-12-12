@@ -78,19 +78,19 @@ std::vector<int> AI::bestMove(std::vector<Piece*>& pieces, Board& board)
 			{
 				if (piece->canMove(i, j, board))
 				{
-					if (board.getOwner(i, j) != piece->getColor())
+					if (board.getColorAt(i, j) != piece->getColor())
 					{
-						if (board.getCharAt(i, j) == 'P')
+						if (board.getPieceAt(i, j) == 'P')
 							newMove = 10;
-						else if (board.getCharAt(i, j) == 'R')
+						else if (board.getPieceAt(i, j) == 'R')
 							newMove = 50;
-						else if (board.getCharAt(i, j) == 'n')
+						else if (board.getPieceAt(i, j) == 'n')
 							newMove = 30;
-						else if (board.getCharAt(i, j) == 'B')
+						else if (board.getPieceAt(i, j) == 'B')
 							newMove = 30;
-						else if (board.getCharAt(i, j) == 'Q')
+						else if (board.getPieceAt(i, j) == 'Q')
 							newMove = 90;
-						else if (board.getCharAt(i, j) == 'K')
+						else if (board.getPieceAt(i, j) == 'K')
 							newMove = 900;
 						else
 							newMove = 0;
@@ -166,7 +166,7 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					if (p1->canMove(i, j, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
@@ -206,7 +206,7 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					if (p1->canMove(i, j, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
@@ -277,7 +277,7 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 		{
 			for (int j = 0; j < boardSize; j++)
 			{
-				if (p->canMove(i, j, board) && board.getOwner(p->getPos1(), p->getPos2()) == p->getColor())
+				if (p->canMove(i, j, board) && board.getColorAt(p->getPos1(), p->getPos2()) == p->getColor())
 				{
 					Board tempB;
 					tempB.copyBoard(board);

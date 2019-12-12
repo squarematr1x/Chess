@@ -24,25 +24,25 @@ void Moves::promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& 
 			if (option == 'q' || option == 'Q')
 			{
 				pieces.push_back(new Queen(color, row, col));
-				board.setCharAt(row, col, 'Q');
+				board.setPieceAt(row, col, 'Q');
 				break;
 			}
 			else if (option == 'n' || option == 'N')
 			{
 				pieces.push_back(new Knight(color, row, col));
-				board.setCharAt(row, col, 'n');
+				board.setPieceAt(row, col, 'n');
 				break;
 			}
 			else if (option == 'r' || option == 'R')
 			{
 				pieces.push_back(new Rook(color, row, col));
-				board.setCharAt(row, col, 'R');
+				board.setPieceAt(row, col, 'R');
 				break;
 			}
 			else if (option == 'b' || option == 'B')
 			{
 				pieces.push_back(new Bishop(color, row, col));
-				board.setCharAt(row, col, 'B');
+				board.setPieceAt(row, col, 'B');
 				break;
 			}
 			else

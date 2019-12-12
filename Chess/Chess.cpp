@@ -142,14 +142,14 @@ int main()
 
 	for (auto& wp : whitePieces)
 	{
-		board.setCharAt(wp->getPos1(), wp->getPos2(), wp->getName());
-		board.setOwner(wp->getPos1(), wp->getPos2(), wp->getColor());
+		board.setPieceAt(wp->getPos1(), wp->getPos2(), wp->getName());
+		board.setColorAt(wp->getPos1(), wp->getPos2(), wp->getColor());
 	}
 
 	for (auto& bp : blackPieces)
 	{
-		board.setCharAt(bp->getPos1(), bp->getPos2(), bp->getName());
-		board.setOwner(bp->getPos1(), bp->getPos2(), bp->getColor());
+		board.setPieceAt(bp->getPos1(), bp->getPos2(), bp->getName());
+		board.setColorAt(bp->getPos1(), bp->getPos2(), bp->getColor());
 	}
 	board.started();
 
@@ -240,25 +240,25 @@ int main()
 
 		if (pvp)
 		{
-			if (turn == 0 && board.getOwner(row1, col1) == 'w')
+			if (turn == 0 && board.getColorAt(row1, col1) == 'w')
 			{
 				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
-				if (board.getOwner(row1, col1) != 'w')
+				if (board.getColorAt(row1, col1) != 'w')
 					turn = 1;
 			}
-			else if (turn == 1 && board.getOwner(row1, col1) == 'b')
+			else if (turn == 1 && board.getColorAt(row1, col1) == 'b')
 			{
 				moves.move(row1, col1, row2, col2, blackPieces, whitePieces, board);
-				if (board.getOwner(row1, col1) != 'b')
+				if (board.getColorAt(row1, col1) != 'b')
 					turn = 0;
 			}
 		}
 		else
 		{
-			if (turn == 0 && board.getOwner(row1, col1) == 'w')
+			if (turn == 0 && board.getColorAt(row1, col1) == 'w')
 			{
 				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
-				if (board.getOwner(row1, col1) != 'w')
+				if (board.getColorAt(row1, col1) != 'w')
 					turn = 1;
 			}
 			else if (turn == 1)
@@ -274,7 +274,9 @@ int main()
 			}
 		}
 		board.updateBoardValue();
+		std::cout << board.getBoardValue() << '\n';
 	}
+
 
 	for (auto piece : whitePieces)
 		delete piece;

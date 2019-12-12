@@ -4,20 +4,12 @@
 Board::Board()
 {
 	m_board.resize(8);
-	m_owned.resize(8);
 
 	// Creating 8x8 game board
 	for (std::size_t i = 0; i < 8; ++i)
 	{
 		for (std::size_t j = 0; j < 8; ++j)
-			m_board[i].push_back('.');
-	}
-
-	// Ownership of each node: white ('w'), black ('b') and empty ('.')
-	for (std::size_t i = 0; i < 8; ++i)
-	{
-		for (std::size_t j = 0; j < 8; ++j)
-			m_owned[i].push_back('.');
+			m_board[i].push_back(square {'.', '.'});
 	}
 }
 
@@ -30,7 +22,7 @@ void Board::printBoard()
 		std::cout << m_board.size() - i << "|";
 		for (std::size_t j = 0; j < m_board.size(); j++)
 		{
-			std::cout << " " << getCharAt(i, j) << " ";
+			std::cout << " " << getPieceAt(i, j) << " ";
 		}
 		if (m_atStart)
 		{
@@ -46,10 +38,10 @@ void Board::printBoard()
 
 void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char color)
 {
-	setCharAt(row1, col1, '.');
-	setCharAt(row2, col2, name);
-	setOwner(row1, col1, '.');
-	setOwner(row2, col2, color);
+	setPieceAt(row1, col1, '.');
+	setPieceAt(row2, col2, name);
+	setColorAt(row1, col1, '.');
+	setColorAt(row2, col2, color);
 
 	updateBoardValue();
 }
@@ -57,7 +49,6 @@ void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char 
 void Board::copyBoard(Board& board)
 {
 	m_board.resize(8);
-	m_owned.resize(8);
 
 	m_atStart = board.getStarted();
 	m_boardValue = board.getBoardValue();
@@ -66,14 +57,9 @@ void Board::copyBoard(Board& board)
 	{
 		for (std::size_t j = 0; j < 8; ++j) 
 		{
-			m_board[i][j] = board.getCharAt(i, j);
+			square sqr = { board.getPieceAt(i, j) , board.getColorAt(i, j) };
+			m_board[i][j] = sqr;
 		}
-	}
-
-	for (std::size_t i = 0; i < 8; ++i)
-	{
-		for (std::size_t j = 0; j < 8; ++j)
-			m_owned[i][j] = board.getOwner(i, j);
 	}
 }
 
@@ -85,46 +71,46 @@ void Board::updateBoardValue()
 	{
 		for (std::size_t j = 0; j < m_board.size(); j++)
 		{
-			if (getCharAt(i, j) == 'P')
+			if (getPieceAt(i, j) == 'P')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 10;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 10;
 			}
-			if (getCharAt(i, j) == 'R')
+			else if (getPieceAt(i, j) == 'R')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 50;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 50;
 			}
-			if (getCharAt(i, j) == 'n')
+			else if (getPieceAt(i, j) == 'n')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 30;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 30;
 			}
-			if (getCharAt(i, j) == 'B')
+			else if (getPieceAt(i, j) == 'B')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 30;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 30;
 			}
-			if (getCharAt(i, j) == 'Q')
+			else if (getPieceAt(i, j) == 'Q')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 90;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 90;
 			}
-			if (getCharAt(i, j) == 'K')
+			else if (getPieceAt(i, j) == 'K')
 			{
-				if (getOwner(i, j) == 'w')
+				if (getColorAt(i, j) == 'w')
 					m_boardValue += 90;
-				else if (getOwner(i, j) == 'b')
+				else if (getColorAt(i, j) == 'b')
 					m_boardValue -= 90;
 			}
 		}
