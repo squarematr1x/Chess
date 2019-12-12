@@ -10,11 +10,6 @@ class Bishop;
 class Queen;
 class King;
 
-struct position {
-	int pos1;
-	int pos2;
-};
-
 class Piece
 {
 protected:
@@ -34,9 +29,9 @@ public:
 	}
 
 	char getColor() { return m_color; }
-	char getName()	{ return m_name; }
-	int getPos1()	{ return m_pos1; }
-	int getPos2()	{ return m_pos2; }
+	char getName()	{ return m_name;  }
+	int getPos1()	{ return m_pos1;  }
+	int getPos2()	{ return m_pos2;  }
 
 	void tellPos() { std::cout << "(" << getPos1() << ", " << getPos2() << ")\n"; }
 

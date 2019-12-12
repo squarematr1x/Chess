@@ -30,6 +30,7 @@ public:
 	int max(int a, int b);
 
 	int evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board);
+	void updatePos(int from1, int from2, int to1, int to2);
 
 	bool ableToMove(Piece*& piece, Board &board);
 	Board& getBoard() { return m_tempBoard; }

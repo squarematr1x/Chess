@@ -221,12 +221,8 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 						p1->updatePos(oldPos1, oldPos2);
 
 						if (eval < minEval)
-						{
-							m_from1 = p1->getPos1();
-							m_from2 = p1->getPos2();
-							m_to1 = i;
-							m_to2 = j;
-						}
+							updatePos(p1->getPos1(), p1->getPos2(), i, j);
+
 						minEval = min(eval, minEval);
 
 						beta = min(beta, eval);
@@ -300,4 +296,12 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 		}
 	}
 	return eval;
+}
+
+void AI::updatePos(int from1, int from2, int to1, int to2)
+{
+	m_from1 = from1;
+	m_from2 = from2;
+	m_to1 = to1;
+	m_to2 = to2;
 }
