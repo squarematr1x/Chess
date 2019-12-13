@@ -79,28 +79,11 @@ int getGameMode()
 	return gameMode;
 }
 
-int main()
+void intializePieces(std::vector<Piece*>& whitePieces, std::vector<Piece*>& blackPieces)
 {
-	Board board;
-	Moves moves;
-	AI AI(board);
-
-	std::vector<Piece*> whitePieces;
-	std::vector<Piece*> blackPieces;
-
-	std::map<int, int> coord1 = { {1, 7}, {2, 6}, {3, 5}, {4, 4}, {5, 3}, {6, 2} , {7, 1}, {8, 0} };
-	std::map<char, int> coord2 = { {'a', 0}, {'b', 1}, {'c', 2}, {'d', 3}, {'e', 4}, {'f', 5} , {'g', 6}, {'h', 7} };
-
-	whitePieces.resize(16);
-	blackPieces.resize(16);
-
 	int colSpecial = 0;
 	int colPawn = 0;
 
-	// Turn 0: white, 1: black
-	int turn = 0;
-
-	// Initializing chess pieces
 	for (std::size_t i = 0; i != whitePieces.size(); i++)
 	{
 		if (i < 8)
@@ -139,6 +122,29 @@ int main()
 			colPawn++;
 		}
 	}
+}
+
+int main()
+{
+	Board board;
+	Moves moves;
+	AI AI(board);
+
+	std::vector<Piece*> whitePieces;
+	std::vector<Piece*> blackPieces;
+
+	// For converting player input to corresponding positions
+	std::map<int, int> coord1 = { {1, 7}, {2, 6}, {3, 5}, {4, 4}, {5, 3}, {6, 2} , {7, 1}, {8, 0} };
+	std::map<char, int> coord2 = { {'a', 0}, {'b', 1}, {'c', 2}, {'d', 3}, {'e', 4}, {'f', 5} , {'g', 6}, {'h', 7} };
+
+	whitePieces.resize(16);
+	blackPieces.resize(16);
+
+	// Turn 0: white, 1: black
+	int turn = 0;
+
+	// Initializing chess pieces
+	intializePieces(whitePieces, blackPieces);
 
 	for (auto& wp : whitePieces)
 	{
