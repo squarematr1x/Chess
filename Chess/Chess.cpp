@@ -90,35 +90,35 @@ void intializePieces(std::vector<Piece*>& whitePieces, std::vector<Piece*>& blac
 		{
 			if (colSpecial == 0 || colSpecial == 7)
 			{
-				whitePieces[i] = new Rook('w', 7, colSpecial);
-				blackPieces[i] = new Rook('b', 0, colSpecial);
+				whitePieces[i] = new Rook('w', position{ 7, colSpecial });
+				blackPieces[i] = new Rook('b', position{ 0, colSpecial });
 			}
 			else if (colSpecial == 1 || colSpecial == 6)
 			{
-				whitePieces[i] = new Knight('w', 7, colSpecial);
-				blackPieces[i] = new Knight('b', 0, colSpecial);
+				whitePieces[i] = new Knight('w', position{ 7, colSpecial });
+				blackPieces[i] = new Knight('b', position{ 0, colSpecial });
 			}
 			else if (colSpecial == 2 || colSpecial == 5)
 			{
-				whitePieces[i] = new Bishop('w', 7, colSpecial);
-				blackPieces[i] = new Bishop('b', 0, colSpecial);
+				whitePieces[i] = new Bishop('w', position{ 7, colSpecial });
+				blackPieces[i] = new Bishop('b', position{ 0, colSpecial });
 			}
 			else if (colSpecial == 4)
 			{
-				whitePieces[i] = new Queen('w', 7, colSpecial);
-				blackPieces[i] = new King('b', 0, colSpecial);
+				whitePieces[i] = new Queen('w', position{ 7, colSpecial });
+				blackPieces[i] = new King('b', position{ 0, colSpecial });
 			}
 			else if (colSpecial == 3)
 			{
-				whitePieces[i] = new King('w', 7, colSpecial);
-				blackPieces[i] = new Queen('b', 0, colSpecial);
+				whitePieces[i] = new King('w', position{ 7, colSpecial });
+				blackPieces[i] = new Queen('b', position{ 0, colSpecial });
 			}
 			colSpecial++;
 		}
 		else
 		{
-			whitePieces[i] = (new Pawn('w', 6, colPawn));
-			blackPieces[i] = (new Pawn('b', 1, colPawn));
+			whitePieces[i] = new Pawn('w', position{ 6, colPawn });
+			blackPieces[i] = new Pawn('b', position{ 1, colPawn });
 			colPawn++;
 		}
 	}
@@ -181,21 +181,23 @@ int main()
 	{
 		board.printBoard();
 
-		int row1 = 0, col1 = 0, row2 = 0, col2 = 0;
+		position from{ 0,0 };
+		position to{ 0,0 };
+
 		char cCol1, cCol2;
 		bool checkW = false, checkB = false;
 
 		turn == 0 ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
 		// Checking if current state of the game is check
-		moves.updateCheckFlag(checkW, row1, col1, whitePieces, blackPieces, board);
-		moves.updateCheckFlag(checkB, row1, col1, blackPieces, whitePieces, board);
+		moves.updateCheckFlag(checkW, from, whitePieces, blackPieces, board);
+		moves.updateCheckFlag(checkB, from, blackPieces, whitePieces, board);
 
 		if (checkW)
-			moves.updateCheckMateFlag(gameOver, row1, col1, whitePieces, blackPieces, board);
+			moves.updateCheckMateFlag(gameOver, from, whitePieces, blackPieces, board);
 
 		if (checkB)
-			moves.updateCheckMateFlag(gameOver, row1, col1, blackPieces, whitePieces, board);
+			moves.updateCheckMateFlag(gameOver, from, blackPieces, whitePieces, board);
 
 		if (gameOver)
 			break;
@@ -206,20 +208,20 @@ int main()
 			{
 				std::cout << "Select from:\n";
 				std::cout << "row1 (1...8): ";
-				row1 = getInputRow(false);
-				row1 = coord1.at(row1);
+				from.row = getInputRow(false);
+				from.row = coord1.at(from.row);
 				std::cout << "col1 (A...H): ";
 				cCol1 = getInputCol(false);
-				col1 = coord2.at(cCol1);
+				from.col = coord2.at(cCol1);
 			}
 
 			std::cout << "Move to:\n";
 			std::cout << "row2 (1...8): ";
-			row2 = getInputRow(true);
-			row2 = coord1.at(row2);
+			to.row = getInputRow(true);
+			to.row = coord1.at(to.row);
 			std::cout << "col2 (A...H): ";
 			cCol2 = getInputCol(true);
-			col2 = coord2.at(cCol2);
+			to.col = coord2.at(cCol2);
 			std::cout << '\n';
 		}
 		else
@@ -228,43 +230,43 @@ int main()
 			{
 				std::cout << "Select from:\n";
 				std::cout << "row1 (1...8): ";
-				row1 = getInputRow(false);
-				row1 = coord1.at(row1);
+				from.row = getInputRow(false);
+				from.row = coord1.at(from.row);
 				std::cout << "col1 (A...H): ";
 				cCol1 = getInputCol(false);
-				col1 = coord2.at(cCol1);
+				from.col = coord2.at(cCol1);
 				std::cout << "Move to:\n";
 				std::cout << "row2 (1...8): ";
-				row2 = getInputRow(true);
-				row2 = coord1.at(row2);
+				to.row = getInputRow(true);
+				to.row = coord1.at(to.row);
 				std::cout << "col2 (A...H): ";
 				cCol2 = getInputCol(true);
-				col2 = coord2.at(cCol2);
+				to.col = coord2.at(cCol2);
 				std::cout << '\n';
 			}
 		}
 
 		if (pvp)
 		{
-			if (turn == 0 && board.getColorAt(row1, col1) == 'w')
+			if (turn == 0 && board.getColorAt(from.row, from.col) == 'w')
 			{
-				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
-				if (board.getColorAt(row1, col1) != 'w')
+				moves.move(from, to, whitePieces, blackPieces, board);
+				if (board.getColorAt(from.row, from.col) != 'w')
 					turn = 1;
 			}
-			else if (turn == 1 && board.getColorAt(row1, col1) == 'b')
+			else if (turn == 1 && board.getColorAt(from.row, from.col) == 'b')
 			{
-				moves.move(row1, col1, row2, col2, blackPieces, whitePieces, board);
-				if (board.getColorAt(row1, col1) != 'b')
+				moves.move(from, to, blackPieces, whitePieces, board);
+				if (board.getColorAt(from.row, from.col) != 'b')
 					turn = 0;
 			}
 		}
 		else
 		{
-			if (turn == 0 && board.getColorAt(row1, col1) == 'w')
+			if (turn == 0 && board.getColorAt(from.row, from.col) == 'w')
 			{
-				moves.move(row1, col1, row2, col2, whitePieces, blackPieces, board);
-				if (board.getColorAt(row1, col1) != 'w')
+				moves.move(from, to, whitePieces, blackPieces, board);
+				if (board.getColorAt(from.row, from.col) != 'w')
 					turn = 1;
 			}
 			else if (turn == 1)
@@ -274,13 +276,16 @@ int main()
 
 				AI.getBoard().copyBoard(board);
 				AIPos = AI.move(blackPieces, whitePieces, board);
-				moves.move(AIPos[0], AIPos[1], AIPos[2], AIPos[3], blackPieces, whitePieces, board);
+
+				position fromAI { AIPos[0], AIPos[1] };
+				position toAI { AIPos[2], AIPos[3] };
+
+				moves.move(fromAI, toAI, blackPieces, whitePieces, board);
 
 				turn = 0;
 			}
 		}
 		board.updateBoardValue();
-		std::cout << board.getBoardValue() << '\n';
 	}
 
 
