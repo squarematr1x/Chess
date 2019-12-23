@@ -9,7 +9,7 @@
 #include "Moves.h"
 #include "Piece.cpp"
 
-int getInputRow(bool selected)
+int inputRow(bool selected)
 {
 	std::string srow = "";
 	while (true)
@@ -32,7 +32,7 @@ int getInputRow(bool selected)
 	return row;
 }
 
-char getInputCol(bool selected)
+char inputCol(bool selected)
 {
 	std::string scol = "";
 	while (true)
@@ -60,7 +60,7 @@ char getInputCol(bool selected)
 	return col;
 }
 
-int getGameMode()
+int gameMode()
 {
 	std::string sGameMode = "";
 	while (true)
@@ -140,8 +140,19 @@ int main()
 	whitePieces.resize(16);
 	blackPieces.resize(16);
 
-	// Turn 0: white, 1: black
-	int turn = 0;
+	enum Mode
+	{
+		PLAYER_VS_PLAYER = 1,
+		PLAYER_VS_CPU = 2
+	};
+
+	enum Turn
+	{
+		BLACK,
+		WHITE
+	};
+
+	int turn = WHITE;
 
 	// Initializing chess pieces
 	intializePieces(whitePieces, blackPieces);
@@ -161,17 +172,17 @@ int main()
 
 	bool gameOver = false;
 	bool pvp;
-	int gameMode;
+	int mode;
 
 	std::cout << "Welcome to Chess\n";
 	std::cout << "Player vs. Player (1)\n";
 	std::cout << "Player vs. CPU (2)\n";
 	std::cout << '\n';
 	std::cout << "Game mode: ";
-	gameMode = getGameMode();
+	mode = gameMode();
 	std::cout << '\n';
 
-	if (gameMode == 1)
+	if (mode == PLAYER_VS_PLAYER)
 		pvp = true;
 	else
 		pvp = false;
@@ -187,7 +198,7 @@ int main()
 		char cCol1, cCol2;
 		bool checkW = false, checkB = false;
 
-		turn == 0 ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
+		turn == WHITE ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
 		// Checking if current state of the game is check
 		moves.updateCheckFlag(checkW, from, whitePieces, blackPieces, board);
@@ -202,74 +213,74 @@ int main()
 		if (gameOver)
 			break;
 
-		if (pvp) 
+		if (mode == PLAYER_VS_PLAYER) 
 		{
-			if (!checkW && turn == 0 || !checkB && turn == 1)
+			if (!checkW && turn == WHITE || !checkB && turn == BLACK)
 			{
 				std::cout << "Select from:\n";
 				std::cout << "row1 (1...8): ";
-				from.row = getInputRow(false);
+				from.row = inputRow(false);
 				from.row = coord1.at(from.row);
 				std::cout << "col1 (A...H): ";
-				cCol1 = getInputCol(false);
+				cCol1 = inputCol(false);
 				from.col = coord2.at(cCol1);
 			}
 
 			std::cout << "Move to:\n";
 			std::cout << "row2 (1...8): ";
-			to.row = getInputRow(true);
+			to.row = inputRow(true);
 			to.row = coord1.at(to.row);
 			std::cout << "col2 (A...H): ";
-			cCol2 = getInputCol(true);
+			cCol2 = inputCol(true);
 			to.col = coord2.at(cCol2);
 			std::cout << '\n';
 		}
 		else
 		{
-			if (!checkW && turn == 0)
+			if (!checkW && turn == WHITE)
 			{
 				std::cout << "Select from:\n";
 				std::cout << "row1 (1...8): ";
-				from.row = getInputRow(false);
+				from.row = inputRow(false);
 				from.row = coord1.at(from.row);
 				std::cout << "col1 (A...H): ";
-				cCol1 = getInputCol(false);
+				cCol1 = inputCol(false);
 				from.col = coord2.at(cCol1);
 				std::cout << "Move to:\n";
 				std::cout << "row2 (1...8): ";
-				to.row = getInputRow(true);
+				to.row = inputRow(true);
 				to.row = coord1.at(to.row);
 				std::cout << "col2 (A...H): ";
-				cCol2 = getInputCol(true);
+				cCol2 = inputCol(true);
 				to.col = coord2.at(cCol2);
 				std::cout << '\n';
 			}
 		}
 
-		if (pvp)
+		if (mode == PLAYER_VS_PLAYER)
 		{
-			if (turn == 0 && board.getColorAt(from.row, from.col) == 'w')
+			if (turn == WHITE && board.getColorAt(from.row, from.col) == 'w')
 			{
 				moves.move(from, to, whitePieces, blackPieces, board);
 				if (board.getColorAt(from.row, from.col) != 'w')
-					turn = 1;
+					turn = BLACK;
 			}
-			else if (turn == 1 && board.getColorAt(from.row, from.col) == 'b')
+			else if (turn == BLACK && board.getColorAt(from.row, from.col) == 'b')
 			{
 				moves.move(from, to, blackPieces, whitePieces, board);
 				if (board.getColorAt(from.row, from.col) != 'b')
-					turn = 0;
+					turn = WHITE;
 			}
 		}
 		else
 		{
-			if (turn == 0 && board.getColorAt(from.row, from.col) == 'w')
+			if (turn == WHITE && board.getColorAt(from.row, from.col) == 'w')
 			{
 				moves.move(from, to, whitePieces, blackPieces, board);
 				if (board.getColorAt(from.row, from.col) != 'w')
-					turn = 1;
+					turn = BLACK;
 			}
-			else if (turn == 1)
+			else if (turn == BLACK)
 			{
 				std::vector<int> AIPos;
 				AIPos.resize(4);
@@ -282,7 +293,7 @@ int main()
 
 				moves.move(fromAI, toAI, blackPieces, whitePieces, board);
 
-				turn = 0;
+				turn = WHITE;
 			}
 		}
 		board.updateBoardValue();
