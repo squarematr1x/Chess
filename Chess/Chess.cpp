@@ -124,6 +124,15 @@ void intializePieces(std::vector<Piece*>& whitePieces, std::vector<Piece*>& blac
 	}
 }
 
+void destroyPieces(std::vector<Piece*>& whitePieces, std::vector<Piece*>& blackPieces)
+{
+	for (auto piece : whitePieces)
+		delete piece;
+
+	for (auto piece : blackPieces)
+		delete piece;
+}
+
 int main()
 {
 	Board board;
@@ -293,11 +302,7 @@ int main()
 		board.updateBoardValue();
 	}
 
-	for (auto piece : whitePieces)
-		delete piece;
-
-	for (auto piece : blackPieces)
-		delete piece;
+	destroyPieces(whitePieces, blackPieces);
 
 	return 0;
 }
