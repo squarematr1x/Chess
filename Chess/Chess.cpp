@@ -285,14 +285,14 @@ int main()
 			}
 			else if (turn == BLACK)
 			{
-				std::vector<int> AIPos;
-				AIPos.resize(4);
+				std::vector<position> AIPos;
+				AIPos.resize(2);
 
 				AI.getBoard().copyBoard(board);
 				AIPos = AI.move(blackPieces, whitePieces, board);
 
-				position fromAI { AIPos[0], AIPos[1] };
-				position toAI { AIPos[2], AIPos[3] };
+				position fromAI = AIPos[0];
+				position toAI = AIPos[1];
 
 				moves.move(fromAI, toAI, blackPieces, whitePieces, board);
 
