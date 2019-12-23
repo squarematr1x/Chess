@@ -58,7 +58,6 @@ std::vector<position> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 	return positions;
 }
 
-
 bool AI::ableToMove(Piece*& piece, Board& board)
 {
 	int boardSize = 8;
