@@ -171,7 +171,6 @@ int main()
 	board.started();
 
 	bool gameOver = false;
-	bool pvp;
 	int mode;
 
 	std::cout << "Welcome to Chess\n";
@@ -181,11 +180,6 @@ int main()
 	std::cout << "Game mode: ";
 	mode = gameMode();
 	std::cout << '\n';
-
-	if (mode == PLAYER_VS_PLAYER)
-		pvp = true;
-	else
-		pvp = false;
 
 	// Game loop
 	while (1)
@@ -298,7 +292,6 @@ int main()
 		}
 		board.updateBoardValue();
 	}
-
 
 	for (auto piece : whitePieces)
 		delete piece;
