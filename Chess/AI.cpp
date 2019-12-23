@@ -2,7 +2,7 @@
 #include <time.h>
 #include "AI.h"
 
-std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+std::vector<position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	int alpha = INT_MIN;	// Worst for white
 	int beta = INT_MAX;		// Worst for black
@@ -10,20 +10,19 @@ std::vector<int> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pie
 	int depth = 2;
 	minMax(depth, alpha, beta, false, pieces1, pieces2, board);
 
-	std::vector<int> positions;
-	positions.resize(4);
-	positions[0] = m_from1;
-	positions[1] = m_from2;
-	positions[2] = m_to1;
-	positions[3] = m_to2;
+	std::vector<position> positions;
+	positions.resize(2);
+
+	positions[0] = m_from;
+	positions[1] = m_to;
 
 	return positions;
 }
 
-std::vector<int> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
+std::vector<position> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 {
-	std::vector<int> positions;
-	positions.resize(4);
+	std::vector<position> positions;
+	positions.resize(2);
 
 	int rdm;
 	int boardSize = 8;
@@ -44,16 +43,13 @@ std::vector<int> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 			for (int j = 0; j < boardSize; j++)
 			{
 
-				if (pieces[rdm]->canMove(i, j, board)) 
+				if (pieces[rdm]->canMove(position{ i, j }, board))
 				{
-					positions[0] = pieces[rdm]->getPos1();
-					positions[1] = pieces[rdm]->getPos2();
-					positions[2] = i;
-					positions[3] = j;
+					positions[0] = pieces[rdm]->getPos();
+					positions[1] = position{ i, j };
 					found = true;
 					break;
 				}
-
 			}
 		}
 		else
@@ -62,72 +58,6 @@ std::vector<int> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 	return positions;
 }
 
-std::vector<int> AI::bestMove(std::vector<Piece*>& pieces, Board& board)
-{
-	int bestMove = INT_MIN;
-	int newMove = 0;
-	int fromPos1 = 0, fromPos2 = 0;
-	int bestPos1 = 0, bestPos2 = 0;
-	int boardSize = 8;
-
-	for (auto piece : pieces)
-	{
-		for (int i = 0; i < boardSize; i++)
-		{
-			for (int j = 0; j < boardSize; j++)
-			{
-				if (piece->canMove(i, j, board))
-				{
-					if (board.getOwner(i, j) != piece->getColor())
-					{
-						if (board.getCharAt(i, j) == 'P')
-							newMove = 10;
-						else if (board.getCharAt(i, j) == 'R')
-							newMove = 50;
-						else if (board.getCharAt(i, j) == 'n')
-							newMove = 30;
-						else if (board.getCharAt(i, j) == 'B')
-							newMove = 30;
-						else if (board.getCharAt(i, j) == 'Q')
-							newMove = 90;
-						else if (board.getCharAt(i, j) == 'K')
-							newMove = 900;
-						else
-							newMove = 0;
-					}
-					if (newMove > bestMove)
-					{
-						bestMove = newMove;
-						bestPos1 = i;
-						bestPos2 = j;
-						fromPos1 = piece->getPos1();
-						fromPos2 = piece->getPos2();
-					}
-				}
-
-			}
-		}
-	}
-
-	if (bestMove > 0)
-	{
-		std::vector<int> positions;
-		positions.resize(4);
-		positions[0] = fromPos1;
-		positions[1] = fromPos2;
-		positions[2] = bestPos1;
-		positions[3] = bestPos2;
-
-		return positions;
-	}
-	else
-	{
-		std::vector<int> randomPositions;
-		randomPositions.resize(4);
-		randomPositions = randomMove(pieces, board);
-		return randomPositions;
-	}
-}
 
 bool AI::ableToMove(Piece*& piece, Board& board)
 {
@@ -137,9 +67,8 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 	{
 		for (int j = 0; j < boardSize; j++)
 		{
-			if (piece->canMove(i, j, board)) {
+			if (piece->canMove(position{ i, j }, board))
 				return true;
-			}
 		}
 	}
 	return false;
@@ -166,22 +95,22 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					position pos{ i, j };
+					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
 						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
 
-						int oldPos1 = p1->getPos1();
-						int oldPos2 = p1->getPos2();
+						position oldPos = p1->getPos();
 
 						// Updating position for recursive function calls
-						p1->updatePos(i, j);
+						p1->updatePos(pos);
 
 						int eval = minMax(depth - 1, alpha, beta, false, pieces2, pieces1, tempB);
 
 						// Resetting position
-						p1->updatePos(oldPos1, oldPos2);
+						p1->updatePos(oldPos);
 						maxEval = max(eval, maxEval);
 						
 						alpha = max(alpha, eval);
@@ -191,7 +120,6 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 							j = boardSize;
 						}
 					}
-
 				}
 			}
 		}
@@ -206,27 +134,23 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					if (p1->canMove(i, j, board) && board.getOwner(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					position pos{ i, j };
+					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
 						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
 
-						int oldPos1 = p1->getPos1();
-						int oldPos2 = p1->getPos2();
-						p1->updatePos(i, j);
+						position oldPos = p1->getPos();
+						p1->updatePos(pos);
 
 						int eval = minMax(depth - 1, alpha, beta, true, pieces2, pieces1, tempB);
 
-						p1->updatePos(oldPos1, oldPos2);
+						p1->updatePos(oldPos);
 
 						if (eval < minEval)
-						{
-							m_from1 = p1->getPos1();
-							m_from2 = p1->getPos2();
-							m_to1 = i;
-							m_to2 = j;
-						}
+							updatePos(p1->getPos(), position{ i, j });
+
 						minEval = min(eval, minEval);
 
 						beta = min(beta, eval);
@@ -236,7 +160,6 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 							j = boardSize;
 						}
 					}
-
 				}
 			}
 		}
@@ -277,7 +200,8 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 		{
 			for (int j = 0; j < boardSize; j++)
 			{
-				if (p->canMove(i, j, board) && board.getOwner(p->getPos1(), p->getPos2()) == p->getColor())
+				position pos{ i , j };
+				if (p->canMove(pos, board) && board.getColorAt(p->getPos1(), p->getPos2()) == p->getColor())
 				{
 					Board tempB;
 					tempB.copyBoard(board);
@@ -300,4 +224,10 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 		}
 	}
 	return eval;
+}
+
+void AI::updatePos(position from, position to)
+{
+	m_from = from;
+	m_to = to;
 }

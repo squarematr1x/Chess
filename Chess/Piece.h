@@ -3,6 +3,12 @@
 #include <iostream>
 #include "Board.h"
 
+struct position
+{
+	int row;
+	int col;
+};
+
 class Pawn;
 class Rook;
 class Knight;
@@ -15,12 +21,11 @@ class Piece
 protected:
 	char m_color;
 	char m_name;
-	int m_pos1;
-	int m_pos2;
+	position m_pos;
 
 public:
-	Piece(char color, char name, int pos1, int pos2)
-		: m_color(color), m_name(name), m_pos1(pos1), m_pos2(pos2)
+	Piece(char color, char name, position pos)
+		: m_color(color), m_name(name), m_pos(pos)
 	{
 	}
 
@@ -28,10 +33,11 @@ public:
 	{
 	}
 
-	char getColor() { return m_color; }
-	char getName() { return m_name; }
-	int getPos1() { return m_pos1; }
-	int getPos2() { return m_pos2; }
+	char getColor()   { return m_color;    }
+	char getName()	  { return m_name;     }
+	int getPos1()	  { return m_pos.row;  }
+	int getPos2()	  { return m_pos.col;  }
+	position getPos() { return m_pos;      }
 
 	void tellPos() { std::cout << "(" << getPos1() << ", " << getPos2() << ")\n"; }
 
@@ -58,16 +64,15 @@ public:
 		std::cout << color << " " << name << " ";
 	}
 
-	virtual bool canMove(int row, int col, Board& board)
+	virtual bool canMove(position pos, Board& board)
 	{
-		updatePos(row, col);
+		updatePos(pos);
 		(void)board;
 		return true;
 	}
 
-	void updatePos(int row, int col)
+	void updatePos(position pos)
 	{
-		m_pos1 = row;
-		m_pos2 = col;
+		m_pos = pos;
 	}
 };
