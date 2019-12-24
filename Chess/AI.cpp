@@ -4,8 +4,8 @@
 
 std::vector<position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
-	int alpha = INT_MIN;	// Worst for white
-	int beta = INT_MAX;		// Worst for black
+	int alpha = INT_MIN;
+	int beta = INT_MAX;
 
 	int depth = 2;
 	minMax(depth, alpha, beta, false, pieces1, pieces2, board);
@@ -76,9 +76,7 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	if (depth == 0)
-	{
 		return evaluate(pieces1, maximizingPlayer, board);
-	}
 
 	int boardSize = 8;
 
@@ -114,10 +112,7 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 						
 						alpha = max(alpha, eval);
 						if (beta <= alpha)
-						{
-							i = boardSize;
-							j = boardSize;
-						}
+							exitLoop(i, j, boardSize);
 					}
 				}
 			}
@@ -149,37 +144,20 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 
 						if (eval < minEval)
 							updatePos(p1->getPos(), position{ i, j });
+						else if (eval == minEval)
+							swapBestPos(p1->getPos(), position{ i, j });
 
 						minEval = min(eval, minEval);
 
 						beta = min(beta, eval);
 						if (beta <= alpha)
-						{
-							i = boardSize;
-							j = boardSize;
-						}
+							exitLoop(i, j, boardSize);
 					}
 				}
 			}
 		}
 		return minEval;
 	}
-}
-
-int AI::min(int a, int b)
-{
-	if (a <= b)
-		return a;
-	else
-		return b;
-}
-
-int AI::max(int a, int b)
-{
-	if (a >= b)
-		return a;
-	else
-		return b;
 }
 
 int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
@@ -225,8 +203,39 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 	return eval;
 }
 
+int AI::min(int a, int b)
+{
+	if (a <= b)
+		return a;
+	else
+		return b;
+}
+
+int AI::max(int a, int b)
+{
+	if (a >= b)
+		return a;
+	else
+		return b;
+}
+
 void AI::updatePos(position from, position to)
 {
 	m_from = from;
 	m_to = to;
+}
+
+void AI::swapBestPos(position from, position to)
+{
+	int percent = 15;
+	bool swap = (rand() % 100) < percent;
+
+	if (swap)
+		updatePos(from, to);
+}
+
+void AI::exitLoop(int& i, int& j, int boardSize)
+{
+	i = boardSize;
+	j = boardSize;
 }

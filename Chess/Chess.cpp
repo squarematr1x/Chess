@@ -20,6 +20,7 @@ int inputRow(bool selected)
 		{
 			std::cin.clear();
 			std::cin.ignore(INT_MAX, '\n');
+
 			if (!selected)
 				std::cout << "row1 (1...8): ";
 			else
@@ -48,6 +49,7 @@ char inputCol(bool selected)
 		{
 			std::cin.clear();
 			std::cin.ignore(INT_MAX, '\n');
+
 			if (!selected)
 				std::cout << "col1 (A...H): ";
 			else
@@ -139,16 +141,6 @@ int main()
 	Moves moves;
 	AI AI(board);
 
-	std::vector<Piece*> whitePieces;
-	std::vector<Piece*> blackPieces;
-
-	// For converting player input to corresponding positions
-	std::map<int, int> coord1 = { {1, 7}, {2, 6}, {3, 5}, {4, 4}, {5, 3}, {6, 2} , {7, 1}, {8, 0} };
-	std::map<char, int> coord2 = { {'a', 0}, {'b', 1}, {'c', 2}, {'d', 3}, {'e', 4}, {'f', 5} , {'g', 6}, {'h', 7} };
-
-	whitePieces.resize(16);
-	blackPieces.resize(16);
-
 	enum Mode
 	{
 		PLAYER_VS_PLAYER = 1,
@@ -161,7 +153,11 @@ int main()
 		WHITE
 	};
 
-	int turn = WHITE;
+	std::vector<Piece*> whitePieces;
+	std::vector<Piece*> blackPieces;
+
+	whitePieces.resize(16);
+	blackPieces.resize(16);
 
 	// Initializing chess pieces
 	intializePieces(whitePieces, blackPieces);
@@ -179,7 +175,12 @@ int main()
 	}
 	board.started();
 
+	// For converting player input to corresponding positions
+	std::map<int, int> coord1 = { {1, 7}, {2, 6}, {3, 5}, {4, 4}, {5, 3}, {6, 2} , {7, 1}, {8, 0} };
+	std::map<char, int> coord2 = { {'a', 0}, {'b', 1}, {'c', 2}, {'d', 3}, {'e', 4}, {'f', 5} , {'g', 6}, {'h', 7} };
+
 	bool gameOver = false;
+	int turn = WHITE;
 	int mode;
 
 	std::cout << "Welcome to Chess\n";
@@ -216,48 +217,24 @@ int main()
 		if (gameOver)
 			break;
 
-		if (mode == PLAYER_VS_PLAYER) 
+		if (mode == PLAYER_VS_PLAYER || (mode == PLAYER_VS_CPU && turn == WHITE))
 		{
-			if (!checkW && turn == WHITE || !checkB && turn == BLACK)
-			{
-				std::cout << "Select from:\n";
-				std::cout << "row1 (1...8): ";
-				from.row = inputRow(false);
-				from.row = coord1.at(from.row);
-				std::cout << "col1 (A...H): ";
-				cCol1 = inputCol(false);
-				from.col = coord2.at(cCol1);
-			}
+			std::cout << "Select from:\n";
+			std::cout << "row1 (1..8): ";
+			from.row = inputRow(false);
+			from.row = coord1.at(from.row);
+			std::cout << "col1 (A..H): ";
+			cCol1 = inputCol(false);
+			from.col = coord2.at(cCol1);
 
 			std::cout << "Move to:\n";
-			std::cout << "row2 (1...8): ";
+			std::cout << "row2 (1..8): ";
 			to.row = inputRow(true);
 			to.row = coord1.at(to.row);
-			std::cout << "col2 (A...H): ";
+			std::cout << "col2 (A..H): ";
 			cCol2 = inputCol(true);
 			to.col = coord2.at(cCol2);
 			std::cout << '\n';
-		}
-		else
-		{
-			if (!checkW && turn == WHITE)
-			{
-				std::cout << "Select from:\n";
-				std::cout << "row1 (1...8): ";
-				from.row = inputRow(false);
-				from.row = coord1.at(from.row);
-				std::cout << "col1 (A...H): ";
-				cCol1 = inputCol(false);
-				from.col = coord2.at(cCol1);
-				std::cout << "Move to:\n";
-				std::cout << "row2 (1...8): ";
-				to.row = inputRow(true);
-				to.row = coord1.at(to.row);
-				std::cout << "col2 (A...H): ";
-				cCol2 = inputCol(true);
-				to.col = coord2.at(cCol2);
-				std::cout << '\n';
-			}
 		}
 
 		if (mode == PLAYER_VS_PLAYER)
