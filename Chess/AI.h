@@ -27,6 +27,7 @@ public:
 	int evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board);
 
 	void updatePos(position from, position to);
+	void exitLoop(int& i, int& j, int boardSize);
 
 	bool ableToMove(Piece*& piece, Board &board);
 
