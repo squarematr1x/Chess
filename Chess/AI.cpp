@@ -4,8 +4,8 @@
 
 std::vector<position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
-	int alpha = INT_MIN;	// Worst for white
-	int beta = INT_MAX;		// Worst for black
+	int alpha = INT_MIN;
+	int beta = INT_MAX;
 
 	int depth = 2;
 	minMax(depth, alpha, beta, false, pieces1, pieces2, board);

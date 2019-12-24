@@ -216,48 +216,24 @@ int main()
 		if (gameOver)
 			break;
 
-		if (mode == PLAYER_VS_PLAYER) 
+		if (mode == PLAYER_VS_PLAYER || (mode == PLAYER_VS_CPU && turn == WHITE))
 		{
-			if (!checkW && turn == WHITE || !checkB && turn == BLACK)
-			{
-				std::cout << "Select from:\n";
-				std::cout << "row1 (1...8): ";
-				from.row = inputRow(false);
-				from.row = coord1.at(from.row);
-				std::cout << "col1 (A...H): ";
-				cCol1 = inputCol(false);
-				from.col = coord2.at(cCol1);
-			}
+			std::cout << "Select from:\n";
+			std::cout << "row1 (1..8): ";
+			from.row = inputRow(false);
+			from.row = coord1.at(from.row);
+			std::cout << "col1 (A..H): ";
+			cCol1 = inputCol(false);
+			from.col = coord2.at(cCol1);
 
 			std::cout << "Move to:\n";
-			std::cout << "row2 (1...8): ";
+			std::cout << "row2 (1..8): ";
 			to.row = inputRow(true);
 			to.row = coord1.at(to.row);
-			std::cout << "col2 (A...H): ";
+			std::cout << "col2 (A..H): ";
 			cCol2 = inputCol(true);
 			to.col = coord2.at(cCol2);
 			std::cout << '\n';
-		}
-		else
-		{
-			if (!checkW && turn == WHITE)
-			{
-				std::cout << "Select from:\n";
-				std::cout << "row1 (1...8): ";
-				from.row = inputRow(false);
-				from.row = coord1.at(from.row);
-				std::cout << "col1 (A...H): ";
-				cCol1 = inputCol(false);
-				from.col = coord2.at(cCol1);
-				std::cout << "Move to:\n";
-				std::cout << "row2 (1...8): ";
-				to.row = inputRow(true);
-				to.row = coord1.at(to.row);
-				std::cout << "col2 (A...H): ";
-				cCol2 = inputCol(true);
-				to.col = coord2.at(cCol2);
-				std::cout << '\n';
-			}
 		}
 
 		if (mode == PLAYER_VS_PLAYER)
