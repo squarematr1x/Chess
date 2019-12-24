@@ -144,6 +144,8 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 
 						if (eval < minEval)
 							updatePos(p1->getPos(), position{ i, j });
+						else if (eval == minEval)
+							swapBestPos(p1->getPos(), position{ i, j });
 
 						minEval = min(eval, minEval);
 
@@ -221,6 +223,15 @@ void AI::updatePos(position from, position to)
 {
 	m_from = from;
 	m_to = to;
+}
+
+void AI::swapBestPos(position from, position to)
+{
+	int percent = 15;
+	bool swap = (rand() % 100) < percent;
+
+	if (swap)
+		updatePos(from, to);
 }
 
 void AI::exitLoop(int& i, int& j, int boardSize)
