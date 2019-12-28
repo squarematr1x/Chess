@@ -9,8 +9,8 @@ void Moves::promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& 
 
 	if (choice == 'y' || choice == 'Y')
 	{
-		int row = pawn->getPos1();
-		int col = pawn->getPos2();
+		int row = pawn->getRow();
+		int col = pawn->getCol();
 		char color = pawn->getColor();
 		char option;
 
@@ -23,37 +23,37 @@ void Moves::promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& 
 
 			if (option == 'q' || option == 'Q')
 			{
-				pieces.push_back(new Queen(color, position{ row, col }));
+				pieces.push_back(new Queen(color, Position{ row, col }));
 				board.setPieceAt(row, col, 'Q');
 				break;
 			}
 			else if (option == 'n' || option == 'N')
 			{
-				pieces.push_back(new Knight(color, position{ row, col }));
+				pieces.push_back(new Knight(color, Position{ row, col }));
 				board.setPieceAt(row, col, 'n');
 				break;
 			}
 			else if (option == 'r' || option == 'R')
 			{
-				pieces.push_back(new Rook(color, position{ row, col }));
+				pieces.push_back(new Rook(color, Position{ row, col }));
 				board.setPieceAt(row, col, 'R');
 				break;
 			}
 			else if (option == 'b' || option == 'B')
 			{
-				pieces.push_back(new Bishop(color, position{ row, col }));
+				pieces.push_back(new Bishop(color, Position{ row, col }));
 				board.setPieceAt(row, col, 'B');
 				break;
 			}
 			else
-				std::cout << "Invalid input. Try again.\n";
+				std::cout << "Invalid input. Try Queen (Q), Knight (n), Rook (R) or Bishop (B)\n";
 		}
 	}
 	// Removing empty elements
 	pieces.erase(pieces.begin() + indx);
 }
 
-bool Moves::check(std::vector<Piece*> pieces, position pos, Board& board)
+bool Moves::check(std::vector<Piece*> pieces, Position pos, Board& board)
 {
 	for (auto p : pieces)
 	{
@@ -65,12 +65,15 @@ bool Moves::check(std::vector<Piece*> pieces, position pos, Board& board)
 
 bool Moves::checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
 {
-	position to = king->getPos();
+	Position to;
+
+	int legalPositions = 0;
 
 	for (int i = -1; i <= 1; i++)
 	{
 		for (int j = -1; j <= 1; j++)
 		{
+			to = king->getPos();
 			if (to.row + i >= 0 && to.row + i <= 7 && to.col + j >= 0 && to.col + j <= 7)
 			{
 				to.row = to.row + i;
@@ -78,17 +81,22 @@ bool Moves::checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
 				if (king->canMove(to, board))
 				{
 					if (!check(pieces, to, board))
-						return false;
+						legalPositions++;
 				}
 			}
-
 		}
 	}
-	std::cout << "Check Mate!\n";
-	return true;
+
+	if (legalPositions > 0)
+		return false;
+	else
+	{
+		std::cout << "Check Mate!\n";
+		return true;
+	}
 }
 
-void Moves::move(position from, position to, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	int removeId = 0;
 	bool replaced = false;
@@ -96,7 +104,7 @@ void Moves::move(position from, position to, std::vector<Piece*>& p1, std::vecto
 
 	for (std::size_t i = 0; i != p2.size(); i++)
 	{
-		if (to.row == p2[i]->getPos1() && to.col == p2[i]->getPos2())
+		if (to.row == p2[i]->getRow() && to.col == p2[i]->getCol())
 		{
 			removeId = i;
 			removed = true;
@@ -106,7 +114,7 @@ void Moves::move(position from, position to, std::vector<Piece*>& p1, std::vecto
 
 	for (std::size_t i = 0; i != p1.size(); i++)
 	{
-		if (from.row == p1[i]->getPos1() && from.col == p1[i]->getPos2())
+		if (from.row == p1[i]->getRow() && from.col == p1[i]->getCol())
 		{
 			if (p1[i]->canMove(to, board))
 			{
@@ -137,7 +145,7 @@ void Moves::move(position from, position to, std::vector<Piece*>& p1, std::vecto
 	std::cout << '\n';
 }
 
-void Moves::updateCheckFlag(bool& setCheck, position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::updateCheckFlag(bool& setCheck, Position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	for (auto p : p1)
 	{
@@ -158,7 +166,7 @@ void Moves::updateCheckFlag(bool& setCheck, position& pos, std::vector<Piece*>& 
 	}
 }
 
-void Moves::updateCheckMateFlag(bool& gameOver, position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::updateCheckMateFlag(bool& gameOver, Position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	std::cout << "Check!\n";
 	for (auto p : p1)

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Board.h"
+#include "Piece.h"
 
 Board::Board()
 {
@@ -9,7 +10,7 @@ Board::Board()
 	for (std::size_t i = 0; i < 8; ++i)
 	{
 		for (std::size_t j = 0; j < 8; ++j)
-			m_board[i].push_back(square {'.', '.'});
+			m_board[i].push_back(Square {'.', '.'});
 	}
 }
 
@@ -57,7 +58,8 @@ void Board::copyBoard(Board& board)
 	{
 		for (std::size_t j = 0; j < 8; ++j) 
 		{
-			square sqr = { board.getPieceAt(i, j) , board.getColorAt(i, j) };
+			Position pos{ (int)i, (int)j };
+			Square sqr = { board.getPieceAt(i, j) , board.getColorAt(pos) };
 			m_board[i][j] = sqr;
 		}
 	}
@@ -71,46 +73,47 @@ void Board::updateBoardValue()
 	{
 		for (std::size_t j = 0; j < m_board.size(); j++)
 		{
+			Position pos{ (int)i, (int)j };
 			if (getPieceAt(i, j) == 'P')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 10;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 10;
 			}
 			else if (getPieceAt(i, j) == 'R')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 50;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 50;
 			}
 			else if (getPieceAt(i, j) == 'n')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 30;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 30;
 			}
 			else if (getPieceAt(i, j) == 'B')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 30;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 30;
 			}
 			else if (getPieceAt(i, j) == 'Q')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 90;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 90;
 			}
 			else if (getPieceAt(i, j) == 'K')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (getColorAt(pos) == 'w')
 					m_boardValue += 90;
-				else if (getColorAt(i, j) == 'b')
+				else if (getColorAt(pos) == 'b')
 					m_boardValue -= 90;
 			}
 		}

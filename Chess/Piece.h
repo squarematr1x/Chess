@@ -3,12 +3,6 @@
 #include <iostream>
 #include "Board.h"
 
-struct position
-{
-	int row;
-	int col;
-};
-
 class Pawn;
 class Rook;
 class Knight;
@@ -21,10 +15,10 @@ class Piece
 protected:
 	char m_color;
 	char m_name;
-	position m_pos;
+	Position m_pos;
 
 public:
-	Piece(char color, char name, position pos)
+	Piece(char color, char name, Position pos)
 		: m_color(color), m_name(name), m_pos(pos)
 	{
 	}
@@ -35,11 +29,11 @@ public:
 
 	char getColor()   { return m_color;    }
 	char getName()	  { return m_name;     }
-	int getPos1()	  { return m_pos.row;  }
-	int getPos2()	  { return m_pos.col;  }
-	position getPos() { return m_pos;      }
+	int getRow()	  { return m_pos.row;  }
+	int getCol()	  { return m_pos.col;  }
+	Position getPos() { return m_pos;      }
 
-	void tellPos() { std::cout << "(" << getPos1() << ", " << getPos2() << ")\n"; }
+	void tellPos() { std::cout << "(" << getRow() << ", " << getCol() << ")\n"; }
 
 	void tellInfo()
 	{
@@ -64,14 +58,14 @@ public:
 		std::cout << color << " " << name << " ";
 	}
 
-	virtual bool canMove(position pos, Board& board)
+	virtual bool canMove(Position pos, Board& board)
 	{
 		updatePos(pos);
 		(void)board;
 		return true;
 	}
 
-	void updatePos(position pos)
+	void updatePos(Position pos)
 	{
 		m_pos = pos;
 	}
