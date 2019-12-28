@@ -174,7 +174,6 @@ int main()
 		board.setPieceAt(bp->getPos(), bp->name());
 		board.setColorAt(bp->getPos(), bp->color());
 	}
-	board.started();
 
 	// For converting player input to corresponding positions
 	std::map<int, int> coord1 = { {1, 7}, {2, 6}, {3, 5}, {4, 4}, {5, 3}, {6, 2} , {7, 1}, {8, 0} };
@@ -195,6 +194,7 @@ int main()
 	while (1)
 	{
 		board.printBoard();
+		board.started();
 
 		Position from{ 0,0 };
 		Position to{ 0,0 };

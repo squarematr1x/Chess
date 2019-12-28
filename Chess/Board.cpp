@@ -102,9 +102,9 @@ void Board::updateBoardValue()
 			else if (PieceAt(pos) == 'B')
 			{
 				if (ColorAt(pos) == 'w')
-					m_boardValue += 30;
+					m_boardValue += 40;
 				else if (ColorAt(pos) == 'b')
-					m_boardValue -= 30;
+					m_boardValue -= 40;
 			}
 			else if (PieceAt(pos) == 'Q')
 			{

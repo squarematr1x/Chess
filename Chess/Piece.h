@@ -37,25 +37,25 @@ public:
 
 	void tellInfo()
 	{
-		std::string color_;
-		std::string name_;
+		std::string pieceColor;
+		std::string pieceName;
 
-		color() == 'w' ? color_ = "White" : color_ = "Black";
+		color() == 'w' ? pieceColor = "White" : pieceColor = "Black";
 
 		if (name() == 'P')
-			name_ = "pawn";
+			pieceName = "pawn";
 		else if (name() == 'R')
-			name_ = "rook";
+			pieceName = "rook";
 		else if (name() == 'n')
-			name_ = "knight";
+			pieceName = "knight";
 		else if (name() == 'B')
-			name_ = "bishop";
+			pieceName = "bishop";
 		else if (name() == 'Q')
-			name_ = "queen";
+			pieceName = "queen";
 		else
-			name_ = "king";
+			pieceName = "king";
 
-		std::cout << color_ << " " << name_ << " ";
+		std::cout << pieceColor << " " << pieceName << " ";
 	}
 
 	virtual bool canMove(Position pos, Board& board)
