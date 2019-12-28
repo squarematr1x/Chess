@@ -16,32 +16,32 @@ public:
 	{
 		if (m_color == 'b')
 		{
-			if (pos.row == m_pos.row + 1 && pos.col == m_pos.col && board.getColorAt(pos) == '.')
+			if (pos.row == m_pos.row + 1 && pos.col == m_pos.col && board.ColorAt(pos) == '.')
 				return true;
-			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col + 1 && board.getColorAt(pos) == 'w')
+			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col + 1 && board.ColorAt(pos) == 'w')
 				return true;
-			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col - 1 && board.getColorAt(pos) == 'w')
+			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col - 1 && board.ColorAt(pos) == 'w')
 				return true;
 			else if (pos.row == m_pos.row + 2 && pos.col == m_pos.col && m_pos.row == 1)
 			{
 				Position newPos{ m_pos.row + 1, pos.col };
-				if (board.getColorAt(pos) == '.' && board.getColorAt(newPos) == '.')
+				if (board.ColorAt(pos) == '.' && board.ColorAt(newPos) == '.')
 					return true;
 			}
 		}
 
 		else if (m_color == 'w')
 		{
-			if (pos.row == m_pos.row - 1 && pos.col == m_pos.col && board.getColorAt(pos) == '.')
+			if (pos.row == m_pos.row - 1 && pos.col == m_pos.col && board.ColorAt(pos) == '.')
 				return true;
-			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col - 1 && board.getColorAt(pos) == 'b')
+			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col - 1 && board.ColorAt(pos) == 'b')
 				return true;
-			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col + 1 && board.getColorAt(pos) == 'b')
+			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col + 1 && board.ColorAt(pos) == 'b')
 				return true;
 			else if (pos.row == m_pos.row - 2 && pos.col == m_pos.col && m_pos.row == 6)
 			{
 				Position newPos{ m_pos.row - 1, pos.col };
-				if (board.getColorAt(pos) == '.' && board.getColorAt(newPos) == '.')
+				if (board.ColorAt(pos) == '.' && board.ColorAt(newPos) == '.')
 					return true;
 			}
 		}
@@ -68,7 +68,7 @@ public:
 			{
 				for (int i = m_pos.col + 1; i < pos.col; i++)
 				{
-					if (board.getPieceAt(m_pos.row, i) != '.')
+					if (board.PieceAt(Position{ m_pos.row, i }) != '.')
 						return false;
 				}
 			}
@@ -76,7 +76,7 @@ public:
 			{
 				for (int i = pos.col + 1; i < m_pos.col; i++)
 				{
-					if (board.getPieceAt(m_pos.row, i) != '.')
+					if (board.PieceAt(Position{ m_pos.row, i }) != '.')
 						return false;
 				}
 			}
@@ -86,7 +86,7 @@ public:
 			{
 				for (int i = m_pos.row + 1; i < pos.row; i++)
 				{
-					if (board.getPieceAt(i, m_pos.col) != '.')
+					if (board.PieceAt(Position{ i, m_pos.col }) != '.')
 						return false;
 				}
 			}
@@ -94,7 +94,7 @@ public:
 			{
 				for (int i = pos.row + 1; i < m_pos.row; i++)
 				{
-					if (board.getPieceAt(i, m_pos.col) != '.')
+					if (board.PieceAt(Position{ i, m_pos.col }) != '.')
 						return false;
 				}
 			}
@@ -107,7 +107,7 @@ public:
 		if (!openPathTo(pos, board))
 			return false;
 
-		if (m_color != board.getColorAt(pos))
+		if (m_color != board.ColorAt(pos))
 		{
 			if (pos.row == m_pos.row && pos.col != m_pos.col)
 				return true;
@@ -132,7 +132,7 @@ public:
 
 	bool canMove(Position pos, Board& board)
 	{
-		if (m_color != board.getColorAt(pos))
+		if (m_color != board.ColorAt(pos))
 		{
 			if (pos.row == m_pos.row + 1 && (pos.col == m_pos.col - 2 || pos.col == m_pos.col + 2))
 				return true;
@@ -182,7 +182,7 @@ public:
 		for (int i = m_pos.row + rowOffset; i != pos.row; i += rowOffset)
 		{
 			Position newPos{ i, j };
-			if (board.getColorAt(newPos) != '.')
+			if (board.ColorAt(newPos) != '.')
 				return false;
 
 			j += colOffset;
@@ -192,7 +192,7 @@ public:
 
 	bool canMove(Position pos, Board& board)
 	{
-		if (std::abs(pos.row - m_pos.row) != std::abs(pos.col - m_pos.col) || m_color == board.getColorAt(pos))
+		if (std::abs(pos.row - m_pos.row) != std::abs(pos.col - m_pos.col) || m_color == board.ColorAt(pos))
 			return false;
 		if (!openPathTo(pos, board))
 			return false;
@@ -236,9 +236,9 @@ public:
 			return false;
 		}
 
-		if (m_color != board.getColorAt(pos)) {
+		if (m_color != board.ColorAt(pos)) {
 			if (std::abs(pos.row - m_pos.row) == std::abs(pos.col - m_pos.col) && 
-				m_color != board.getColorAt(pos))
+				m_color != board.ColorAt(pos))
 				return true;
 			else if (pos.row - m_pos.row == 0 || pos.col - m_pos.col == 0)
 				return true;
@@ -266,7 +266,7 @@ public:
 
 	bool canMove(Position pos, Board& board)
 	{
-		if (m_color != board.getColorAt(pos))
+		if (m_color != board.ColorAt(pos))
 		{
 			for (std::size_t i = 0; i != kingPositions.size(); i++)
 			{

@@ -27,35 +27,35 @@ public:
 	{
 	}
 
-	char getColor()   { return m_color;    }
-	char getName()	  { return m_name;     }
-	int getRow()	  { return m_pos.row;  }
-	int getCol()	  { return m_pos.col;  }
-	Position getPos() { return m_pos;      }
+	char color() const      { return m_color;    }
+	char name() const       { return m_name;     }
+	int row() const	        { return m_pos.row;  }
+	int col() const         { return m_pos.col;  }
+	Position getPos() const { return m_pos;      }
 
-	void tellPos() { std::cout << "(" << getRow() << ", " << getCol() << ")\n"; }
+	void tellPos() { std::cout << "(" << row() << ", " << col() << ")\n"; }
 
 	void tellInfo()
 	{
-		std::string color;
-		std::string name;
+		std::string color_;
+		std::string name_;
 
-		getColor() == 'w' ? color = "White" : color = "Black";
+		color() == 'w' ? color_ = "White" : color_ = "Black";
 
-		if (getName() == 'P')
-			name = "pawn";
-		else if (getName() == 'R')
-			name = "rook";
-		else if (getName() == 'n')
-			name = "knight";
-		else if (getName() == 'B')
-			name = "bishop";
-		else if (getName() == 'Q')
-			name = "queen";
+		if (name() == 'P')
+			name_ = "pawn";
+		else if (name() == 'R')
+			name_ = "rook";
+		else if (name() == 'n')
+			name_ = "knight";
+		else if (name() == 'B')
+			name_ = "bishop";
+		else if (name() == 'Q')
+			name_ = "queen";
 		else
-			name = "king";
+			name_ = "king";
 
-		std::cout << color << " " << name << " ";
+		std::cout << color_ << " " << name_ << " ";
 	}
 
 	virtual bool canMove(Position pos, Board& board)

@@ -9,9 +9,8 @@ void Moves::promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& 
 
 	if (choice == 'y' || choice == 'Y')
 	{
-		int row = pawn->getRow();
-		int col = pawn->getCol();
-		char color = pawn->getColor();
+		Position pos = pawn->getPos();
+		char color = pawn->color();
 		char option;
 
 		delete pawn;
@@ -23,26 +22,26 @@ void Moves::promote(std::vector<Piece*>& pieces, Piece*& pawn, int indx, Board& 
 
 			if (option == 'q' || option == 'Q')
 			{
-				pieces.push_back(new Queen(color, Position{ row, col }));
-				board.setPieceAt(row, col, 'Q');
+				pieces.push_back(new Queen(color, pos));
+				board.setPieceAt(pos, 'Q');
 				break;
 			}
 			else if (option == 'n' || option == 'N')
 			{
-				pieces.push_back(new Knight(color, Position{ row, col }));
-				board.setPieceAt(row, col, 'n');
+				pieces.push_back(new Knight(color, pos));
+				board.setPieceAt(pos, 'n');
 				break;
 			}
 			else if (option == 'r' || option == 'R')
 			{
-				pieces.push_back(new Rook(color, Position{ row, col }));
-				board.setPieceAt(row, col, 'R');
+				pieces.push_back(new Rook(color, pos));
+				board.setPieceAt(pos, 'R');
 				break;
 			}
 			else if (option == 'b' || option == 'B')
 			{
-				pieces.push_back(new Bishop(color, Position{ row, col }));
-				board.setPieceAt(row, col, 'B');
+				pieces.push_back(new Bishop(color, pos));
+				board.setPieceAt(pos, 'B');
 				break;
 			}
 			else
@@ -104,7 +103,7 @@ void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vecto
 
 	for (std::size_t i = 0; i != p2.size(); i++)
 	{
-		if (to.row == p2[i]->getRow() && to.col == p2[i]->getCol())
+		if (to.row == p2[i]->row() && to.col == p2[i]->col())
 		{
 			removeId = i;
 			removed = true;
@@ -114,20 +113,20 @@ void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vecto
 
 	for (std::size_t i = 0; i != p1.size(); i++)
 	{
-		if (from.row == p1[i]->getRow() && from.col == p1[i]->getCol())
+		if (from.row == p1[i]->row() && from.col == p1[i]->col())
 		{
 			if (p1[i]->canMove(to, board))
 			{
 				replaced = true;
-				board.updateBoard(from.row, from.col, to.row, to.col, p1[i]->getName(), p1[i]->getColor());
+				board.updateBoard(from, to, p1[i]->name(), p1[i]->color());
 				p1[i]->updatePos(to);
 				p1[i]->tellInfo();
 				std::cout << "was moved\n";
 
-				if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'w' && to.row == 0)
+				if (p1[i]->name() == 'P' && p1[i]->color() == 'w' && to.row == 0)
 					promote(p1, p1[i], i, board);
 
-				else if (p1[i]->getName() == 'P' && p1[i]->getColor() == 'b' && to.row == 7)
+				else if (p1[i]->name() == 'P' && p1[i]->color() == 'b' && to.row == 7)
 					promote(p1, p1[i], i, board);
 			}
 			else
@@ -149,7 +148,7 @@ void Moves::updateCheckFlag(bool& setCheck, Position& pos, std::vector<Piece*>& 
 {
 	for (auto p : p1)
 	{
-		if (p->getName() == 'K')
+		if (p->name() == 'K')
 		{
 			pos = p->getPos();
 			if (check(p2, pos, board))
@@ -171,7 +170,7 @@ void Moves::updateCheckMateFlag(bool& gameOver, Position& pos, std::vector<Piece
 	std::cout << "Check!\n";
 	for (auto p : p1)
 	{
-		if (p->getName() == 'K')
+		if (p->name() == 'K')
 		{
 			pos = p->getPos();
 			if (checkMate(p2, p, board))

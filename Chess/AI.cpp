@@ -92,17 +92,17 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					Position pos{ i, j };
-					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos()) == p1->getColor())
+					Position newPos{ i, j };
+					if (p1->canMove(newPos, board) && board.ColorAt(p1->getPos()) == p1->color())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
-						tempB.updateBoard(p1->getRow(), p1->getCol(), i, j, p1->getName(), p1->getColor());
+						tempB.updateBoard(p1->getPos(), newPos, p1->name(), p1->color());
 
 						Position oldPos = p1->getPos();
 
 						// Updating position for recursive function calls
-						p1->updatePos(pos);
+						p1->updatePos(newPos);
 
 						int eval = minMax(depth - 1, alpha, beta, false, pieces2, pieces1, tempB);
 
@@ -128,24 +128,24 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					Position pos{ i, j };
-					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos()) == p1->getColor())
+					Position newPos{ i, j };
+					if (p1->canMove(newPos, board) && board.ColorAt(p1->getPos()) == p1->color())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
-						tempB.updateBoard(p1->getRow(), p1->getCol(), i, j, p1->getName(), p1->getColor());
+						tempB.updateBoard(p1->getPos(), newPos, p1->name(), p1->color());
 
 						Position oldPos = p1->getPos();
-						p1->updatePos(pos);
+						p1->updatePos(newPos);
 
 						int eval = minMax(depth - 1, alpha, beta, true, pieces2, pieces1, tempB);
 
 						p1->updatePos(oldPos);
 
 						if (eval < minEval)
-							updatePos(p1->getPos(), Position{ i, j });
+							updatePos(p1->getPos(), newPos);
 						else if (eval == minEval)
-							swapBestPos(p1->getPos(), Position{ i, j });
+							swapBestPos(p1->getPos(), newPos);
 
 						minEval = min(eval, minEval);
 
@@ -178,21 +178,21 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 			for (int j = 0; j < boardSize; j++)
 			{
 				Position pos{ i , j };
-				if (p->canMove(pos, board) && board.getColorAt(p->getPos()) == p->getColor())
+				if (p->canMove(pos, board) && board.ColorAt(p->getPos()) == p->color())
 				{
 					Board tempB;
 					tempB.copyBoard(board);
-					tempB.updateBoard(p->getRow(), p->getCol(), i, j, p->getName(), p->getColor());
+					tempB.updateBoard(p->getPos(), pos, p->name(), p->color());
 
 					if (maximizing)
 					{
-						int newValue = tempB.getBoardValue();
+						int newValue = tempB.BoardValue();
 						if (newValue > eval)
 							eval = newValue;
 					}
 					else
 					{
-						int newValue = tempB.getBoardValue();
+						int newValue = tempB.BoardValue();
 						if (newValue < eval)
 							eval = newValue;
 					}
