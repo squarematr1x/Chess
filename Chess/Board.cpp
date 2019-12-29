@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Board.h"
+#include "Piece.h"
 
 Board::Board()
 {
@@ -9,7 +10,7 @@ Board::Board()
 	for (std::size_t i = 0; i < 8; ++i)
 	{
 		for (std::size_t j = 0; j < 8; ++j)
-			m_board[i].push_back(square {'.', '.'});
+			m_board[i].push_back(Square {'.', '.'});
 	}
 }
 
@@ -17,12 +18,16 @@ void Board::printBoard()
 {
 	std::cout << "   A  B  C  D  E  F  G  H \n";
 	std::cout << "   -----------------------\n";
+
+	Position pos;
 	for (std::size_t i = 0; i < m_board.size(); i++)
 	{
 		std::cout << m_board.size() - i << "|";
 		for (std::size_t j = 0; j < m_board.size(); j++)
 		{
-			std::cout << " " << getPieceAt(i, j) << " ";
+			pos.row = i;
+			pos.col = j;
+			std::cout << " " << PieceAt(pos) << " ";
 		}
 		if (m_atStart)
 		{
@@ -36,12 +41,12 @@ void Board::printBoard()
 	std::cout << '\n';
 }
 
-void Board::updateBoard(int row1, int col1, int row2, int col2, char name, char color)
+void Board::updateBoard(Position pos1, Position pos2, char name, char color)
 {
-	setPieceAt(row1, col1, '.');
-	setPieceAt(row2, col2, name);
-	setColorAt(row1, col1, '.');
-	setColorAt(row2, col2, color);
+	setPieceAt(pos1, '.');
+	setPieceAt(pos2, name);
+	setColorAt(pos1, '.');
+	setColorAt(pos2, color);
 
 	updateBoardValue();
 }
@@ -50,14 +55,15 @@ void Board::copyBoard(Board& board)
 {
 	m_board.resize(8);
 
-	m_atStart = board.getStarted();
-	m_boardValue = board.getBoardValue();
+	m_atStart = board.isStarted();
+	m_boardValue = board.BoardValue();
 
 	for (std::size_t i = 0; i < 8; ++i)
 	{
 		for (std::size_t j = 0; j < 8; ++j) 
 		{
-			square sqr = { board.getPieceAt(i, j) , board.getColorAt(i, j) };
+			Position pos{ (int)i, (int)j };
+			Square sqr = { board.PieceAt(pos) , board.ColorAt(pos) };
 			m_board[i][j] = sqr;
 		}
 	}
@@ -71,46 +77,47 @@ void Board::updateBoardValue()
 	{
 		for (std::size_t j = 0; j < m_board.size(); j++)
 		{
-			if (getPieceAt(i, j) == 'P')
+			Position pos{ (int)i, (int)j };
+			if (PieceAt(pos) == 'P')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (ColorAt(pos) == 'w')
 					m_boardValue += 10;
-				else if (getColorAt(i, j) == 'b')
+				else if (ColorAt(pos) == 'b')
 					m_boardValue -= 10;
 			}
-			else if (getPieceAt(i, j) == 'R')
+			else if (PieceAt(pos) == 'R')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (ColorAt(pos) == 'w')
 					m_boardValue += 50;
-				else if (getColorAt(i, j) == 'b')
+				else if (ColorAt(pos) == 'b')
 					m_boardValue -= 50;
 			}
-			else if (getPieceAt(i, j) == 'n')
+			else if (PieceAt(pos) == 'n')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (ColorAt(pos) == 'w')
 					m_boardValue += 30;
-				else if (getColorAt(i, j) == 'b')
+				else if (ColorAt(pos) == 'b')
 					m_boardValue -= 30;
 			}
-			else if (getPieceAt(i, j) == 'B')
+			else if (PieceAt(pos) == 'B')
 			{
-				if (getColorAt(i, j) == 'w')
-					m_boardValue += 30;
-				else if (getColorAt(i, j) == 'b')
-					m_boardValue -= 30;
+				if (ColorAt(pos) == 'w')
+					m_boardValue += 40;
+				else if (ColorAt(pos) == 'b')
+					m_boardValue -= 40;
 			}
-			else if (getPieceAt(i, j) == 'Q')
+			else if (PieceAt(pos) == 'Q')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (ColorAt(pos) == 'w')
 					m_boardValue += 90;
-				else if (getColorAt(i, j) == 'b')
+				else if (ColorAt(pos) == 'b')
 					m_boardValue -= 90;
 			}
-			else if (getPieceAt(i, j) == 'K')
+			else if (PieceAt(pos) == 'K')
 			{
-				if (getColorAt(i, j) == 'w')
+				if (ColorAt(pos) == 'w')
 					m_boardValue += 90;
-				else if (getColorAt(i, j) == 'b')
+				else if (ColorAt(pos) == 'b')
 					m_boardValue -= 90;
 			}
 		}

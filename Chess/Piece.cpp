@@ -3,7 +3,7 @@
 class Pawn : public Piece
 {
 public:
-	Pawn(char color, position pos)
+	Pawn(char color, Position pos)
 		: Piece(color, 'P', pos)
 	{
 	}
@@ -12,32 +12,38 @@ public:
 	{
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
 		if (m_color == 'b')
 		{
-			if (pos.row == m_pos.row + 1 && pos.col == m_pos.col && board.getColorAt(pos.row, pos.col) == '.')
+			if (pos.row == m_pos.row + 1 && pos.col == m_pos.col && board.ColorAt(pos) == '.')
 				return true;
-			else if (pos.row == m_pos.row + 2 && pos.col == m_pos.col && m_pos.row == 1 &&
-				     board.getColorAt(pos.row, pos.col) == '.' && board.getColorAt(m_pos.row + 1, pos.col) == '.')
+			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col + 1 && board.ColorAt(pos) == 'w')
 				return true;
-			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col + 1 && board.getColorAt(pos.row, pos.col) == 'w')
+			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col - 1 && board.ColorAt(pos) == 'w')
 				return true;
-			else if (pos.row == m_pos.row + 1 && pos.col == m_pos.col - 1 && board.getColorAt(pos.row, pos.col) == 'w')
-				return true;
+			else if (pos.row == m_pos.row + 2 && pos.col == m_pos.col && m_pos.row == 1)
+			{
+				Position newPos{ m_pos.row + 1, pos.col };
+				if (board.ColorAt(pos) == '.' && board.ColorAt(newPos) == '.')
+					return true;
+			}
 		}
 
 		else if (m_color == 'w')
 		{
-			if (pos.row == m_pos.row - 1 && pos.col == m_pos.col && board.getColorAt(pos.row, pos.col) == '.')
+			if (pos.row == m_pos.row - 1 && pos.col == m_pos.col && board.ColorAt(pos) == '.')
 				return true;
-			else if (pos.row == m_pos.row - 2 && pos.col == m_pos.col && m_pos.row == 6 &&
-				     board.getColorAt(pos.row, pos.col) == '.' && board.getColorAt(m_pos.row - 1, pos.col) == '.')
+			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col - 1 && board.ColorAt(pos) == 'b')
 				return true;
-			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col - 1 && board.getColorAt(pos.row, pos.col) == 'b')
+			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col + 1 && board.ColorAt(pos) == 'b')
 				return true;
-			else if (pos.row == m_pos.row - 1 && pos.col == m_pos.col + 1 && board.getColorAt(pos.row, pos.col) == 'b')
-				return true;
+			else if (pos.row == m_pos.row - 2 && pos.col == m_pos.col && m_pos.row == 6)
+			{
+				Position newPos{ m_pos.row - 1, pos.col };
+				if (board.ColorAt(pos) == '.' && board.ColorAt(newPos) == '.')
+					return true;
+			}
 		}
 		return false;
 	}
@@ -46,7 +52,7 @@ public:
 class Rook : public Piece
 {
 public:
-	Rook(char color, position pos)
+	Rook(char color, Position pos)
 		: Piece(color, 'R', pos)
 	{
 	}
@@ -55,14 +61,14 @@ public:
 	{
 	}
 
-	bool openPathTo(position pos, Board& board)
+	bool openPathTo(Position pos, Board& board)
 	{
 		if (m_pos.row == pos.row) {
 			if (m_pos.col < pos.col)
 			{
 				for (int i = m_pos.col + 1; i < pos.col; i++)
 				{
-					if (board.getPieceAt(m_pos.row, i) != '.')
+					if (board.PieceAt(Position{ m_pos.row, i }) != '.')
 						return false;
 				}
 			}
@@ -70,7 +76,7 @@ public:
 			{
 				for (int i = pos.col + 1; i < m_pos.col; i++)
 				{
-					if (board.getPieceAt(m_pos.row, i) != '.')
+					if (board.PieceAt(Position{ m_pos.row, i }) != '.')
 						return false;
 				}
 			}
@@ -80,7 +86,7 @@ public:
 			{
 				for (int i = m_pos.row + 1; i < pos.row; i++)
 				{
-					if (board.getPieceAt(i, m_pos.col) != '.')
+					if (board.PieceAt(Position{ i, m_pos.col }) != '.')
 						return false;
 				}
 			}
@@ -88,7 +94,7 @@ public:
 			{
 				for (int i = pos.row + 1; i < m_pos.row; i++)
 				{
-					if (board.getPieceAt(i, m_pos.col) != '.')
+					if (board.PieceAt(Position{ i, m_pos.col }) != '.')
 						return false;
 				}
 			}
@@ -96,12 +102,12 @@ public:
 		return true;
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
 		if (!openPathTo(pos, board))
 			return false;
 
-		if (m_color != board.getColorAt(pos.row, pos.col))
+		if (m_color != board.ColorAt(pos))
 		{
 			if (pos.row == m_pos.row && pos.col != m_pos.col)
 				return true;
@@ -115,7 +121,7 @@ public:
 class Knight : public Piece
 {
 public:
-	Knight(char color, position pos)
+	Knight(char color, Position pos)
 		: Piece(color, 'n', pos)
 	{
 	}
@@ -124,9 +130,9 @@ public:
 	{
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
-		if (m_color != board.getColorAt(pos.row, pos.col))
+		if (m_color != board.ColorAt(pos))
 		{
 			if (pos.row == m_pos.row + 1 && (pos.col == m_pos.col - 2 || pos.col == m_pos.col + 2))
 				return true;
@@ -144,7 +150,7 @@ public:
 class Bishop : public Piece
 {
 public:
-	Bishop(char color, position pos)
+	Bishop(char color, Position pos)
 		: Piece(color, 'B', pos)
 	{
 	}
@@ -153,7 +159,7 @@ public:
 	{
 	}
 
-	bool openPathTo(position pos, Board& board)
+	bool openPathTo(Position pos, Board& board)
 	{
 		int rowOffset = 0;
 		int colOffset = 0;
@@ -175,7 +181,8 @@ public:
 		int j = m_pos.col + colOffset;
 		for (int i = m_pos.row + rowOffset; i != pos.row; i += rowOffset)
 		{
-			if (board.getColorAt(i, j) != '.')
+			Position newPos{ i, j };
+			if (board.ColorAt(newPos) != '.')
 				return false;
 
 			j += colOffset;
@@ -183,9 +190,9 @@ public:
 		return true;
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
-		if (std::abs(pos.row - m_pos.row) != std::abs(pos.col - m_pos.col) || m_color == board.getColorAt(pos.row, pos.col))
+		if (std::abs(pos.row - m_pos.row) != std::abs(pos.col - m_pos.col) || m_color == board.ColorAt(pos))
 			return false;
 		if (!openPathTo(pos, board))
 			return false;
@@ -197,7 +204,7 @@ public:
 class Queen : public Piece
 {
 public:
-	Queen(char color, position pos)
+	Queen(char color, Position pos)
 		: Piece(color, 'Q', pos)
 	{
 	}
@@ -206,7 +213,7 @@ public:
 	{
 	}
 
-	bool openPathTo(position pos, Board& board)
+	bool openPathTo(Position pos, Board& board)
 	{
 		Rook rook = Rook(m_color, m_pos);
 		if (rook.canMove(pos, board))
@@ -222,16 +229,16 @@ public:
 		return false;
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
 		if (!openPathTo(pos, board))
 		{
 			return false;
 		}
 
-		if (m_color != board.getColorAt(pos.row, pos.col)) {
+		if (m_color != board.ColorAt(pos)) {
 			if (std::abs(pos.row - m_pos.row) == std::abs(pos.col - m_pos.col) && 
-				m_color != board.getColorAt(pos.row, pos.col))
+				m_color != board.ColorAt(pos))
 				return true;
 			else if (pos.row - m_pos.row == 0 || pos.col - m_pos.col == 0)
 				return true;
@@ -248,7 +255,7 @@ private:
 													{1, -1},  {1, 0},  {1, 1} };
 
 public:
-	King(char color, position pos)
+	King(char color, Position pos)
 		: Piece(color, 'K', pos)
 	{
 	}
@@ -257,9 +264,9 @@ public:
 	{
 	}
 
-	bool canMove(position pos, Board& board)
+	bool canMove(Position pos, Board& board)
 	{
-		if (m_color != board.getColorAt(pos.row, pos.col))
+		if (m_color != board.ColorAt(pos))
 		{
 			for (std::size_t i = 0; i != kingPositions.size(); i++)
 			{

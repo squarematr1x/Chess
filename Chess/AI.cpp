@@ -2,15 +2,15 @@
 #include <time.h>
 #include "AI.h"
 
-std::vector<position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+std::vector<Position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	int alpha = INT_MIN;
 	int beta = INT_MAX;
 
 	int depth = 2;
-	minMax(depth, alpha, beta, false, pieces1, pieces2, board);
+	minMax(depth, alpha, beta, MinMaxPlayer::MINIMIZING, pieces1, pieces2, board);
 
-	std::vector<position> positions;
+	std::vector<Position> positions;
 	positions.resize(2);
 
 	positions[0] = m_from;
@@ -19,9 +19,9 @@ std::vector<position> AI::move(std::vector<Piece*>& pieces1, std::vector<Piece*>
 	return positions;
 }
 
-std::vector<position> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
+std::vector<Position> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 {
-	std::vector<position> positions;
+	std::vector<Position> positions;
 	positions.resize(2);
 
 	int rdm;
@@ -43,10 +43,10 @@ std::vector<position> AI::randomMove(std::vector<Piece*>& pieces, Board& board)
 			for (int j = 0; j < boardSize; j++)
 			{
 
-				if (pieces[rdm]->canMove(position{ i, j }, board))
+				if (pieces[rdm]->canMove(Position{ i, j }, board))
 				{
 					positions[0] = pieces[rdm]->getPos();
-					positions[1] = position{ i, j };
+					positions[1] = Position{ i, j };
 					found = true;
 					break;
 				}
@@ -66,21 +66,21 @@ bool AI::ableToMove(Piece*& piece, Board& board)
 	{
 		for (int j = 0; j < boardSize; j++)
 		{
-			if (piece->canMove(position{ i, j }, board))
+			if (piece->canMove(Position{ i, j }, board))
 				return true;
 		}
 	}
 	return false;
 }
 
-int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
+int AI::minMax(int depth, int alpha, int beta, MinMaxPlayer player, std::vector<Piece*>& pieces1, std::vector<Piece*>& pieces2, Board& board)
 {
 	if (depth == 0)
-		return evaluate(pieces1, maximizingPlayer, board);
+		return evaluate(pieces1, player, board);
 
 	int boardSize = 8;
 
-	if (maximizingPlayer)
+	if (player == MinMaxPlayer::MAXIMIZING)
 	{
 		int maxEval = INT_MIN;
 
@@ -92,19 +92,19 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					position pos{ i, j };
-					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					Position newPos{ i, j };
+					if (p1->canMove(newPos, board) && board.ColorAt(p1->getPos()) == p1->color())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
-						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
+						tempB.updateBoard(p1->getPos(), newPos, p1->name(), p1->color());
 
-						position oldPos = p1->getPos();
+						Position oldPos = p1->getPos();
 
 						// Updating position for recursive function calls
-						p1->updatePos(pos);
+						p1->updatePos(newPos);
 
-						int eval = minMax(depth - 1, alpha, beta, false, pieces2, pieces1, tempB);
+						int eval = minMax(depth - 1, alpha, beta, MinMaxPlayer::MINIMIZING, pieces2, pieces1, tempB);
 
 						// Resetting position
 						p1->updatePos(oldPos);
@@ -128,24 +128,24 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 			{
 				for (int j = 0; j < boardSize; j++)
 				{
-					position pos{ i, j };
-					if (p1->canMove(pos, board) && board.getColorAt(p1->getPos1(), p1->getPos2()) == p1->getColor())
+					Position newPos{ i, j };
+					if (p1->canMove(newPos, board) && board.ColorAt(p1->getPos()) == p1->color())
 					{
 						Board tempB;
 						tempB.copyBoard(board);
-						tempB.updateBoard(p1->getPos1(), p1->getPos2(), i, j, p1->getName(), p1->getColor());
+						tempB.updateBoard(p1->getPos(), newPos, p1->name(), p1->color());
 
-						position oldPos = p1->getPos();
-						p1->updatePos(pos);
+						Position oldPos = p1->getPos();
+						p1->updatePos(newPos);
 
-						int eval = minMax(depth - 1, alpha, beta, true, pieces2, pieces1, tempB);
+						int eval = minMax(depth - 1, alpha, beta, MinMaxPlayer::MAXIMIZING, pieces2, pieces1, tempB);
 
 						p1->updatePos(oldPos);
 
 						if (eval < minEval)
-							updatePos(p1->getPos(), position{ i, j });
+							updatePos(p1->getPos(), newPos);
 						else if (eval == minEval)
-							swapBestPos(p1->getPos(), position{ i, j });
+							swapBestPos(p1->getPos(), newPos);
 
 						minEval = min(eval, minEval);
 
@@ -160,11 +160,11 @@ int AI::minMax(int depth, int alpha, int beta, bool maximizingPlayer, std::vecto
 	}
 }
 
-int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
+int AI::evaluate(std::vector<Piece*>& pieces, MinMaxPlayer player, Board& board)
 {
 	int eval;
 
-	if (maximizing)
+	if (player == MinMaxPlayer::MAXIMIZING)
 		eval = INT_MIN;
 	else
 		eval = INT_MAX;
@@ -177,22 +177,22 @@ int AI::evaluate(std::vector<Piece*>& pieces, bool maximizing, Board& board)
 		{
 			for (int j = 0; j < boardSize; j++)
 			{
-				position pos{ i , j };
-				if (p->canMove(pos, board) && board.getColorAt(p->getPos1(), p->getPos2()) == p->getColor())
+				Position pos{ i , j };
+				if (p->canMove(pos, board) && board.ColorAt(p->getPos()) == p->color())
 				{
 					Board tempB;
 					tempB.copyBoard(board);
-					tempB.updateBoard(p->getPos1(), p->getPos2(), i, j, p->getName(), p->getColor());
+					tempB.updateBoard(p->getPos(), pos, p->name(), p->color());
 
-					if (maximizing)
+					if (player == MinMaxPlayer::MAXIMIZING)
 					{
-						int newValue = tempB.getBoardValue();
+						int newValue = tempB.BoardValue();
 						if (newValue > eval)
 							eval = newValue;
 					}
 					else
 					{
-						int newValue = tempB.getBoardValue();
+						int newValue = tempB.BoardValue();
 						if (newValue < eval)
 							eval = newValue;
 					}
@@ -219,15 +219,16 @@ int AI::max(int a, int b)
 		return b;
 }
 
-void AI::updatePos(position from, position to)
+void AI::updatePos(Position from, Position to)
 {
 	m_from = from;
 	m_to = to;
 }
 
-void AI::swapBestPos(position from, position to)
+// If equally good position is found, it can replace previously found position
+void AI::swapBestPos(Position from, Position to)
 {
-	int percent = 15;
+	int percent = 10;
 	bool swap = (rand() % 100) < percent;
 
 	if (swap)
