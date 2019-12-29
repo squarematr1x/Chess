@@ -51,9 +51,9 @@ char inputCol(bool selected)
 			std::cin.ignore(INT_MAX, '\n');
 
 			if (!selected)
-				std::cout << "col1 (A...H): ";
+				std::cout << "col1 (A..H): ";
 			else
-				std::cout << "col2 (A...H): ";
+				std::cout << "col2 (A..H): ";
 		}
 		else
 			break;
@@ -219,7 +219,7 @@ int main()
 
 		if (mode == PLAYER_VS_PLAYER || (mode == PLAYER_VS_CPU && turn == WHITE))
 		{
-			std::cout << "Select from:\n";
+			std::cout << "Select from\n";
 			std::cout << "row1 (1..8): ";
 			from.row = inputRow(false);
 			from.row = coord1.at(from.row);
@@ -227,7 +227,7 @@ int main()
 			cCol1 = inputCol(false);
 			from.col = coord2.at(cCol1);
 
-			std::cout << "Move to:\n";
+			std::cout << "Move to\n";
 			std::cout << "row2 (1..8): ";
 			to.row = inputRow(true);
 			to.row = coord1.at(to.row);

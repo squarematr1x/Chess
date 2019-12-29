@@ -26,8 +26,8 @@ public:
 	void printBoard();
 	void updateBoard(Position pos1, Position pos2, char name, char color);
 
-	bool isStarted() { return m_atStart;  }
-	void started()   { m_atStart = false; }
+	bool isStarted() const { return m_atStart;  }
+	void started()         { m_atStart = false; }
 
 	char PieceAt(Position pos) const { return m_board[pos.row][pos.col].piece; }
 	void setPieceAt(Position pos, char name) { m_board[pos.row][pos.col].piece = name; }
