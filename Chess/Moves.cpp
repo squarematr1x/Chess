@@ -165,14 +165,13 @@ void Moves::updateCheckFlag(bool& setCheck, Position& pos, std::vector<Piece*>& 
 	}
 }
 
-void Moves::updateCheckMateFlag(bool& gameOver, Position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::updateCheckMateFlag(bool& gameOver, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	std::cout << "Check!\n";
 	for (auto p : p1)
 	{
 		if (p->name() == 'K')
 		{
-			pos = p->getPos();
 			if (checkMate(p2, p, board))
 			{
 				gameOver = true;

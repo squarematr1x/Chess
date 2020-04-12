@@ -22,9 +22,9 @@ int inputRow(bool selected)
 			std::cin.ignore(INT_MAX, '\n');
 
 			if (!selected)
-				std::cout << "row1 (1...8): ";
+				std::cout << "row1 (1..8): ";
 			else
-				std::cout << "row2 (1...8): ";
+				std::cout << "row2 (1..8): ";
 		}
 		else
 			break;
@@ -139,7 +139,6 @@ void destroyPieces(std::vector<Piece*>& whitePieces, std::vector<Piece*>& blackP
 int main()
 {
 	Board board;
-	Moves moves;
 	AI AI(board);
 
 	enum Mode
@@ -185,8 +184,7 @@ int main()
 
 	std::cout << "Welcome to Chess\n";
 	std::cout << "Player vs. Player (1)\n";
-	std::cout << "Player vs. CPU (2)\n";
-	std::cout << '\n';
+	std::cout << "Player vs. CPU (2)\n\n";
 	std::cout << "Game mode: ";
 	mode = gameMode();
 
@@ -196,26 +194,29 @@ int main()
 		board.printBoard();
 		board.started();
 
-		Position from{ 0,0 };
-		Position to{ 0,0 };
+		Position from { 0, 0 };
+		Position to { 0, 0 };
 
 		char cCol1, cCol2;
 		bool checkW = false, checkB = false;
 
-		turn == WHITE ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
-
 		// Checking if current state of the game is check
-		moves.updateCheckFlag(checkW, from, whitePieces, blackPieces, board);
-		moves.updateCheckFlag(checkB, from, blackPieces, whitePieces, board);
+		Moves::updateCheckFlag(checkW, from, whitePieces, blackPieces, board);
+		Moves::updateCheckFlag(checkB, from, blackPieces, whitePieces, board);
 
 		if (checkW)
-			moves.updateCheckMateFlag(gameOver, from, whitePieces, blackPieces, board);
+			Moves::updateCheckMateFlag(gameOver, whitePieces, blackPieces, board);
 
 		if (checkB)
-			moves.updateCheckMateFlag(gameOver, from, blackPieces, whitePieces, board);
+			Moves::updateCheckMateFlag(gameOver, blackPieces, whitePieces, board);
 
 		if (gameOver)
+		{
+			std::cout << "Game ended!\n";
 			break;
+		}
+
+		turn == WHITE ? std::cout << "White player's turn\n" : std::cout << "Black player's turn\n";
 
 		if (mode == PLAYER_VS_PLAYER || (mode == PLAYER_VS_CPU && turn == WHITE))
 		{
@@ -241,13 +242,13 @@ int main()
 		{
 			if (turn == WHITE && board.ColorAt(from) == 'w')
 			{
-				moves.move(from, to, whitePieces, blackPieces, board);
+				Moves::move(from, to, whitePieces, blackPieces, board);
 				if (board.ColorAt(from) != 'w')
 					turn = BLACK;
 			}
 			else if (turn == BLACK && board.ColorAt(from) == 'b')
 			{
-				moves.move(from, to, blackPieces, whitePieces, board);
+				Moves::move(from, to, blackPieces, whitePieces, board);
 				if (board.ColorAt(from) != 'b')
 					turn = WHITE;
 			}
@@ -256,7 +257,7 @@ int main()
 		{
 			if (turn == WHITE && board.ColorAt(from) == 'w')
 			{
-				moves.move(from, to, whitePieces, blackPieces, board);
+				Moves::move(from, to, whitePieces, blackPieces, board);
 				if (board.ColorAt(from) != 'w')
 					turn = BLACK;
 			}
@@ -271,12 +272,11 @@ int main()
 				Position fromAI = AIPos[0];
 				Position toAI = AIPos[1];
 
-				moves.move(fromAI, toAI, blackPieces, whitePieces, board);
+				Moves::move(fromAI, toAI, blackPieces, whitePieces, board);
 
 				turn = WHITE;
 			}
 		}
-		board.updateBoardValue();
 	}
 
 	destroyPieces(whitePieces, blackPieces);
