@@ -123,3 +123,9 @@ void Board::updateBoardValue()
 		}
 	}
 }
+
+void Board::tellBoardValue()
+{
+	std::cout << "Board value: " << BoardValue() << '\n';
+	std::cout << '\n';
+}

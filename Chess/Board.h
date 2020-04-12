@@ -39,4 +39,5 @@ public:
 
 	void updateBoardValue();
 	void copyBoard(Board& board);
+	void tellBoardValue();
 };

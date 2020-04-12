@@ -112,9 +112,7 @@ bool Moves::canKingMove(std::vector<Piece*> pieces, Piece* king, Board& board)
 	if (legalPositions > 0)
 		return true;
 	else
-	{
 		return false;
-	}
 }
 
 bool Moves::saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
@@ -149,7 +147,6 @@ bool Moves::saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, P
 			}
 		}
 	}
-
 	return false;
 }
 

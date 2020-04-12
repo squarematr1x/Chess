@@ -277,7 +277,7 @@ int main()
 				turn = WHITE;
 			}
 		}
-		board.updateBoardValue();
+		board.tellBoardValue();
 	}
 
 	destroyPieces(whitePieces, blackPieces);
