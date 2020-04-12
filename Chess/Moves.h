@@ -16,6 +16,6 @@ public:
 	static bool checkMate(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board);
 
 	static bool canKingMove(std::vector<Piece*> pieces, Piece* king, Board& board);
-	static bool saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board);
-	static bool killAttacker(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board);
+	static bool canSaveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board);
+	static bool canKillAttacker(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board);
 };

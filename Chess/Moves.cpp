@@ -68,9 +68,9 @@ bool Moves::checkMate(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, 
 
 	if (canKingMove(pieces2, king, board))
 		possibilitiesToSurvive++;
-	if (killAttacker(pieces1, pieces2, king, board))
+	if (canKillAttacker(pieces1, pieces2, king, board))
 		possibilitiesToSurvive++;
-	if (saveKing(pieces1, pieces1, king, board))
+	if (canSaveKing(pieces1, pieces1, king, board))
 		possibilitiesToSurvive++;
 
 	if (possibilitiesToSurvive > 0)
@@ -115,7 +115,7 @@ bool Moves::canKingMove(std::vector<Piece*> pieces, Piece* king, Board& board)
 		return false;
 }
 
-bool Moves::saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
+bool Moves::canSaveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
 {
 	Position to;
 
@@ -150,7 +150,7 @@ bool Moves::saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, P
 	return false;
 }
 
-bool Moves::killAttacker(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
+bool Moves::canKillAttacker(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
 {
 	int attackers = 0;
 	Position attackerPos{ 0, 0 };

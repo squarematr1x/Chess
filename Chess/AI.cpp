@@ -235,8 +235,8 @@ void AI::swapBestPos(Position from, Position to)
 		updatePos(from, to);
 }
 
-void AI::exitLoop(int& i, int& j, int boardSize)
+void AI::exitLoop(int& row, int& col, int boardSize)
 {
-	i = boardSize;
-	j = boardSize;
+	row = boardSize;
+	col = boardSize;
 }
