@@ -62,10 +62,30 @@ bool Moves::check(std::vector<Piece*> pieces, Position pos, Board& board)
 	return false;
 }
 
-bool Moves::checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
+bool Moves::checkMate(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
+{
+	int possibilitiesToSurvive = 0;
+
+	if (canKingMove(pieces2, king, board))
+		possibilitiesToSurvive++;
+	if (killAttacker(pieces1, pieces2, king, board))
+		possibilitiesToSurvive++;
+	if (saveKing(pieces1, pieces1, king, board))
+		possibilitiesToSurvive++;
+
+	if (possibilitiesToSurvive > 0)
+		return false;
+	else
+	{
+		std::cout << "Check Mate!\n";
+		return true;
+	}
+}
+
+// Can king move
+bool Moves::canKingMove(std::vector<Piece*> pieces, Piece* king, Board& board)
 {
 	Position to;
-
 	int legalPositions = 0;
 
 	for (int i = -1; i <= 1; i++)
@@ -80,22 +100,88 @@ bool Moves::checkMate(std::vector<Piece*> pieces, Piece* king, Board& board)
 				if (king->canMove(to, board))
 				{
 					if (!check(pieces, to, board))
+					{
+						std::cout << "Legal positions available!\n";
 						legalPositions++;
+					}
 				}
 			}
 		}
 	}
 
 	if (legalPositions > 0)
-		return false;
+		return true;
 	else
 	{
-		std::cout << "Check Mate!\n";
-		return true;
+		return false;
 	}
 }
 
-void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+bool Moves::saveKing(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
+{
+	Position to;
+
+	Board tempBoard;
+	tempBoard.copyBoard(board);
+
+	for (std::size_t i = 0; i != pieces1.size(); i++)
+	{
+		for (int row = -1; row <= 1; row++)
+		{
+			for (int col = -1; col <= 1; col++)
+			{
+				to = king->getPos();
+				if (to.row + row >= 0 && to.row + row <= 7 && to.col + col >= 0 && to.col + col <= 7)
+				{
+					to.row = to.row + row;
+					to.col = to.col + col;
+					if (pieces1[i]->canMove(to, board) && pieces1[i]->name() != 'K')
+					{
+						tempBoard.updateBoard(pieces1[i]->getPos(), to, pieces1[i]->name(), pieces1[i]->color());
+						if (!check(pieces2, king->getPos(), tempBoard))
+						{
+							std::cout << "To rescue: " << pieces1[i]->name() << '\n';
+							return true;
+						}
+						tempBoard.copyBoard(board);
+					}
+				}
+			}
+		}
+	}
+
+	return false;
+}
+
+bool Moves::killAttacker(std::vector<Piece*> pieces1, std::vector<Piece*> pieces2, Piece* king, Board& board)
+{
+	int attackers = 0;
+	Position attackerPos{ 0, 0 };
+
+	for (auto piece : pieces2)
+	{
+		if (piece->canMove(king->getPos(), board))
+		{
+			attackerPos = piece->getPos();
+			attackers++;
+		}
+	}
+
+	if (attackers > 1)
+		return false;
+
+	for (auto piece : pieces1)
+	{
+		if (piece->canMove(attackerPos, board))
+		{
+			std::cout << "Can kill attacker: " << piece->name() << '\n';
+			return true;
+		}
+	}
+	return false;
+}
+
+void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board, bool& gameOver)
 {
 	int removeId = 0;
 	bool replaced = false;
@@ -138,6 +224,10 @@ void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vecto
 	{
 		p2[removeId]->tellInfo();
 		std::cout << "was destroyed\n";
+		
+		if (p2[removeId]->name() == 'K')
+			gameOver = true;
+
 		delete p2[removeId];
 		p2.erase(p2.begin() + removeId);
 	}
@@ -146,11 +236,11 @@ void Moves::move(Position from, Position to, std::vector<Piece*>& p1, std::vecto
 
 void Moves::updateCheckFlag(bool& setCheck, Position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
-	for (auto p : p1)
+	for (auto piece : p1)
 	{
-		if (p->name() == 'K')
+		if (piece->name() == 'K')
 		{
-			pos = p->getPos();
+			pos = piece->getPos();
 			if (check(p2, pos, board))
 			{
 				setCheck = true;
@@ -165,15 +255,14 @@ void Moves::updateCheckFlag(bool& setCheck, Position& pos, std::vector<Piece*>& 
 	}
 }
 
-void Moves::updateCheckMateFlag(bool& gameOver, Position& pos, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
+void Moves::updateCheckMateFlag(bool& gameOver, std::vector<Piece*>& p1, std::vector<Piece*>& p2, Board& board)
 {
 	std::cout << "Check!\n";
-	for (auto p : p1)
+	for (auto piece : p1)
 	{
-		if (p->name() == 'K')
+		if (piece->name() == 'K')
 		{
-			pos = p->getPos();
-			if (checkMate(p2, p, board))
+			if (checkMate(p1, p2, piece, board))
 			{
 				gameOver = true;
 				break;
